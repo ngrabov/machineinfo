@@ -9,16 +9,20 @@ namespace machineinfo.Models
     {
         Active, Inactive
     }
+    public enum Priority
+    {
+        High, Medium, Low
+    }
     public class Failure
     {
         [Key]
-        public int ID { get; set; }
+        public int FailureId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public int Priority { get; set; }
+        public Priority Priority { get; set; }
         public Status Status { get; set; }
         public DateTime EntryTime { get; set; }
-        public string MachineName { get; set; }
+        public int MachineId { get; set; }
         public ICollection<IFormFile> files { get; set; }
     }
 }
