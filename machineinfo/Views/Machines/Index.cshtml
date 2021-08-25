@@ -8,7 +8,7 @@
     <a asp-controller="Machines" asp-action="Create">Create a machine</a>
 </div>
 
-<div>
+<div class="col-md-6" style="padding-top: 25px;">
     <table class="table table-hover">
         <thead>
             <th>
@@ -17,13 +17,17 @@
             <th>
                 Name
             </th>
+            <th></th>
+            <th></th>
         </thead>
         <tbody>
             @foreach (var item in Model)
             {
                 <tr>
                     <td>@item.MachineId</td>
-                    <td>@item.Name</td>
+                    <td><a asp-action="Details" asp-route-id="@item.MachineId">@item.Name</a></td>
+                    <td><a asp-action="Edit" asp-route-id="@item.MachineId">Update</a></td>
+                    <td><a asp-action="Delete" asp-route-id="@item.MachineId">Delete</a></td>
                 </tr>
             }
         </tbody>

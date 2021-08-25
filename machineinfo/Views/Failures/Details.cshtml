@@ -1,0 +1,33 @@
+@model Failure
+
+@{
+    ViewData["Title"] = @Model.Name + " details";
+}
+
+<h1>@Model.Name</h1>
+
+<div class="col-md-4" style="padding-top: 25px;">
+    <table class="table table-hover">
+        <thead>
+
+        </thead>
+        <tbody>
+            <tr>
+                <td>Priority</td>
+                <td>@Model.Priority</td>
+            </tr>
+            <tr>
+                <td>Description</td>
+                <td>@Model.Description</td>
+            </tr>
+            <tr>
+                <td>Status</td>
+                <td>@Model.Status</td>
+            </tr>
+            <tr>
+                <td>MachineId</td>
+                <td>@Model.MachineId</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

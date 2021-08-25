@@ -56,5 +56,16 @@ namespace machineinfo.Controllers
             return View(machine);
         }
 
+        public async Task<IActionResult> Details(int? id)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+
+            var query = "SELECT * FROM Machines WHERE MachineId = @Id";
+            var machine = await db.QuerySingleOrDefaultAsync<Machine>(query, new{ id });
+            return View(machine);
+        }
     }
 }

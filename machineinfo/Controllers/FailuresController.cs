@@ -63,5 +63,30 @@ namespace machineinfo.Controllers
             ModelState.AddModelError("", "Bad model state.");
             return View(failure);
         }
+
+        public async Task<IActionResult> Details(int? id)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+
+            var query = "SELECT * FROM failures WHERE FailureID = @Id";
+            var failure = await db.QuerySingleOrDefaultAsync<Failure>(query, new {id});
+            return View(failure);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+
+            var query = "DELETE FROM failures WHERE FailureId = @Id";
+            await db.ExecuteAsync(query, new {id});
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

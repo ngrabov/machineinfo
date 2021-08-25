@@ -10,6 +10,7 @@ using Npgsql;
 
 namespace machineinfo.Controllers
 {
+    
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -24,39 +25,11 @@ namespace machineinfo.Controllers
         public async Task<IActionResult> Index()
         {
             db.Open();
-            var query = "SELECT * FROM Machines";
-            var machines = await db.QueryAsync<Machine>(query);
+            var query = "SELECT * FROM Failures WHERE Status = '0' ORDER BY Priority, EntryTime";
+            var failures = await db.QueryAsync<Failure>(query);
             db.Close();
             db.Dispose();
-            return View(machines);
-        }
-
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Create([Bind("Name")]Machine machine)
-        {
-            try
-            {
-                db.Open();
-                var query = "INSERT INTO machines (Name) VALUES (@Name)";
-                var param = new DynamicParameters();
-                param.Add("Name", machine.Name);
-
-                await db.ExecuteAsync(query, param);
-                db.Dispose();
-                db.Close();
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                ModelState.AddModelError("", "Model error.");
-            }
-            ModelState.AddModelError("", "Model error.");
-            return View(machine);
+            return View(failures);
         }
 
         public IActionResult Privacy()

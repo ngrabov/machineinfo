@@ -1,16 +1,12 @@
-﻿@model IEnumerable<machineinfo.Models.Machine>
+﻿@model IEnumerable<machineinfo.Models.Failure>
 
 @{
     ViewData["Title"] = "MachineInfo";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome to MachineInfo</h1>
+    <h1 class="display-4">Failures overview</h1>
     <p></p>
-</div>
-
-<div>
-    <a asp-controller="Machines" asp-action="Create">Create a machine</a>
 </div>
 
 <div>
@@ -22,13 +18,31 @@
             <th>
                 Name
             </th>
+            <th>
+                Machine
+            </th>
+            <th>
+                Status
+            </th>
+            <th>
+                Priority
+            </th>
+            <th>
+                EntryTime
+            </th>
+            <th></th>
         </thead>
         <tbody>
             @foreach (var item in Model)
             {
                 <tr>
+                    <td>@item.FailureId</td>
+                    <td><a asp-controller="Failures" asp-action="Details" asp-route-id="@item.FailureId">@item.Name</a></td>
                     <td>@item.MachineId</td>
-                    <td>@item.Name</td>
+                    <td>@item.Status</td>
+                    <td>@item.Priority</td>
+                    <td>@item.EntryTime</td>
+                    <td><button class="btn btn-primary">Solved</button></td>
                 </tr>
             }
         </tbody>
