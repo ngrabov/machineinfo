@@ -1,0 +1,64 @@
+@model IEnumerable<machineinfo.Models.Failure>
+
+@{
+    ViewData["Title"] = "Create failure";
+}
+
+<div>
+    <a asp-controller="Failures" asp-action="Create">Create new</a>
+</div>
+<div>
+    <table class="table table-hover">
+        <thead>
+            <th>
+                ID
+            </th>
+            <th>    
+                Name
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Priority
+            </th>
+            <th>
+                Status
+            </th>
+            <th>
+                Entry time
+            </th>
+            <th>
+                Machine ID
+            </th>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @item.FailureId
+                    </td>
+                    <td>
+                        @item.Name
+                    </td>
+                    <td>
+                        @item.Description
+                    </td>
+                    <td>
+                        @item.Priority
+                    </td>
+                    <td>
+                        @item.Status
+                    </td>
+                    <td>
+                        @item.EntryTime
+                    </td>
+                    <td>
+                        @item.MachineId
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

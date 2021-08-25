@@ -1,0 +1,60 @@
+@model Failure
+
+@{
+    ViewData["Title"] = "Create failure";
+}
+
+<div style="padding: 0 15px 0 15px;">
+    <h1>Create a failure</h1>
+
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Create" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />@* 
+                    <span asp-validation-for="Name" class="text-danger"></span> *@
+                </div>
+                <div class="form-group">
+                    <label asp-for="Description" class="control-label"></label>
+                    <input asp-for="Description" class="form-control" />@* 
+                    <span asp-validation-for="Description" class="text-danger"></span> *@
+                </div>
+                <div class="form-group">
+                    <label asp-for="MachineId" class="control-label"></label>
+                    <input asp-for="MachineId" class="form-control" maxlength="5" minlength="1" data-val="true" data-val-required="Required field." />@* 
+                    <span asp-validation-for="MachineId" data-valmsg-for="shirtNumber" class="text-danger field-validation-valid"></span> *@
+                </div>
+                <div class="form-group">
+                    <label asp-for="Priority"></label>
+                    @{var selist = new SelectList(System.Enum.GetValues(typeof(Priority)));}
+                    <select asp-for="Priority" class="form-control" asp-items="@selist">
+                        <option value="">--Select priority--</option>
+                    </select>@* 
+                    <span asp-validation-for="Priority" class="text-danger"></span> *@
+                </div>
+                <div class="form-group">
+                    <label asp-for="Status"></label>
+                    @{var slist = new SelectList(System.Enum.GetValues(typeof(Status)));}
+                    <select asp-for="Status" class="form-control" asp-items="@slist">
+                        <option value="">--Select contract option--</option>
+                    </select>@* 
+                    <span asp-validation-for="Status" class="text-danger"></span> *@
+                </div>
+                
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div style="padding-bottom: 20px;">
+        <a asp-action="Index">Back to List</a>
+    </div>
+</div>
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.5.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js"></script>

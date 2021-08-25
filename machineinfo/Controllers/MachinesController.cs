@@ -1,21 +1,18 @@
-﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using machineinfo.Models;
 using System.Data;
+using Microsoft.Extensions.Logging;
 using Dapper;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using Npgsql;
+using machineinfo.Models;
 
 namespace machineinfo.Controllers
 {
-    public class HomeController : Controller
+    public class MachinesController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<MachinesController> _logger;
         private IDbConnection db;
 
-        public HomeController(ILogger<HomeController> logger, IDbConnection db)
+        public MachinesController(ILogger<MachinesController> logger, IDbConnection db)
         {
             _logger = logger;
             this.db = db;
@@ -59,15 +56,5 @@ namespace machineinfo.Controllers
             return View(machine);
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
     }
 }
