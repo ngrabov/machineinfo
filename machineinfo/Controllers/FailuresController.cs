@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Dapper;
 using machineinfo.Models;
 using Microsoft.AspNetCore.Http;
+using machineinfo.ViewModels;
 
 namespace machineinfo.Controllers
 {
@@ -19,14 +20,16 @@ namespace machineinfo.Controllers
             this.db = db;
         }
 
-        public async Task<IActionResult> Index()
-        {
+        public async Task<IActionResult> Index(/* FailureVM model */)
+        {/* 
+            var vm = new FailureVM(); */
             var query = "SELECT * FROM failures";
             db.Open();
-            var failures = await db.QueryAsync<Failure>(query);
+            var failure = await db.QueryAsync<Failure>(query);/* 
+            vm.failures = failure; */
             db.Close();
             db.Dispose();
-            return View(failures);
+            return View(failure);
         }
 
         public IActionResult Create()
@@ -73,6 +76,9 @@ namespace machineinfo.Controllers
 
             var query = "SELECT * FROM failures WHERE FailureID = @Id";
             var failure = await db.QuerySingleOrDefaultAsync<Failure>(query, new {id});
+            var name = "SELECT Name FROM Machines WHERE MachineId = '" + @failure.MachineId + "'";
+            var mac = await db.QuerySingleOrDefaultAsync<Machine>(name, new{failure.MachineId});
+            ViewData["MachineName"] = mac.Name;
             return View(failure);
         }
 
