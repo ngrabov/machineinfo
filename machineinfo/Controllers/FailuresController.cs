@@ -37,7 +37,7 @@ namespace machineinfo.Controllers
             return View();
         }
 
-        [HttpPost]
+        [HttpPost] //Rijesi problem sa nepostojecim IDom za ovo i Edit!!
         public async Task<IActionResult> Create([Bind("Name,Description,Priority,Status,EntryTime,MachineId")]Failure failure, IFormFile file)
         {
             try
