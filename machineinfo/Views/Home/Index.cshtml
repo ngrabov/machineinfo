@@ -42,7 +42,7 @@
                     <td>@item.Status</td>
                     <td>@item.Priority</td>
                     <td>@item.EntryTime</td>
-                    <td><button class="btn btn-primary">Solved</button></td>
+                    <td><a asp-controller="Failures" asp-action="Resolve" asp-route-id="@item.FailureId" class="btn btn-primary">Resolved</a></td>
                 </tr>
             }
         </tbody>

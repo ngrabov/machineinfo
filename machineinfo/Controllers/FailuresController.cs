@@ -112,6 +112,21 @@ namespace machineinfo.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public async Task<IActionResult> Resolve(int? id)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+            db.Open();
+
+            var query = "UPDATE failures SET Status = '1' WHERE FailureId = '" + @id + "'";
+            await db.ExecuteAsync(query, new{id});
+            db.Close();
+            db.Dispose();
+            return RedirectToAction("Index", "Home");
+        }
+
         [HttpPost]
         public async Task<IActionResult> Delete(int? id)
         {
