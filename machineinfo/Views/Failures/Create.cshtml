@@ -14,34 +14,29 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group">
                     <label asp-for="Name" class="control-label"></label>
-                    <input asp-for="Name" class="form-control" />@* 
-                    <span asp-validation-for="Name" class="text-danger"></span> *@
+                    <input asp-for="Name" class="form-control" />
                 </div>
                 <div class="form-group">
                     <label asp-for="Description" class="control-label"></label>
-                    <input asp-for="Description" class="form-control" />@* 
-                    <span asp-validation-for="Description" class="text-danger"></span> *@
+                    <input asp-for="Description" class="form-control" />
                 </div>
                 <div class="form-group">
                     <label asp-for="MachineId" class="control-label"></label>
-                    <input asp-for="MachineId" class="form-control" maxlength="5" minlength="1" data-val="true" data-val-required="Required field." />@* 
-                    <span asp-validation-for="MachineId" data-valmsg-for="shirtNumber" class="text-danger field-validation-valid"></span> *@
+                    <input asp-for="MachineId" class="form-control" maxlength="5" minlength="1" data-val="true" data-val-required="Required field." />
                 </div>
                 <div class="form-group">
                     <label asp-for="Priority"></label>
                     @{var selist = new SelectList(System.Enum.GetValues(typeof(Priority)));}
                     <select asp-for="Priority" class="form-control" asp-items="@selist">
                         <option value="">--Select priority--</option>
-                    </select>@* 
-                    <span asp-validation-for="Priority" class="text-danger"></span> *@
+                    </select>
                 </div>
                 <div class="form-group">
                     <label asp-for="Status"></label>
                     @{var slist = new SelectList(System.Enum.GetValues(typeof(Status)));}
                     <select asp-for="Status" class="form-control" asp-items="@slist">
-                        <option value="">--Select contract option--</option>
-                    </select>@* 
-                    <span asp-validation-for="Status" class="text-danger"></span> *@
+                        <option value="">--Select status--</option>
+                    </select>
                 </div>
                 
                 <div class="form-group">

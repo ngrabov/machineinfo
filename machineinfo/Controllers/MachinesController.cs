@@ -68,17 +68,60 @@ namespace machineinfo.Controllers
             return View(machine);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            db.Open();
+
+            var query = "SELECT * FROM machines WHERE MachineId = @id";
+            var machine = await db.QuerySingleOrDefaultAsync<Machine>(query, new{id});
+
+            db.Close();
+            db.Dispose();
+            return View(machine);
+        }
+
+        [HttpPost, ActionName("Edit")]
+        public async Task<IActionResult> EditPost(int? id, Machine machine)
+        {
+            if(id == null) return NotFound();
+            try
+            {
+                db.Open();
+                var query = "UPDATE Machines SET Name = @Name WHERE MachineId = '" + @id + "'";
+
+                var param = new DynamicParameters();
+                param.Add("Name", machine.Name);
+
+                await db.ExecuteAsync(query, machine);
+                db.Close();
+                db.Dispose();
+                return RedirectToAction(nameof(Index));
+            }
+            catch(System.Exception ex)
+            {
+                ModelState.AddModelError("", ex.ToString());
+            }
+            return View(machine);
+        }
+
         public async Task<IActionResult> Delete(int? id)
         {
             if(id == null)
             {
                 return NotFound();
             }
-
+            db.Open();
             var query = "DELETE FROM failures WHERE MachineId = @id";
             await db.ExecuteAsync(query, new {id});
             var query2 = "DELETE FROM machines WHERE MachineId = @id";
             await db.ExecuteAsync(query2, new {id});
+            db.Close();
+            db.Dispose();
             return RedirectToAction(nameof(Index));
         }
     }

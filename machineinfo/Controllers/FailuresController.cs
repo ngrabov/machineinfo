@@ -76,6 +76,42 @@ namespace machineinfo.Controllers
             return View(failure);
         }
 
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            db.Open();
+
+            var query = "SELECT * FROM failures WHERE FailureId = @id";
+            var failure = await db.QuerySingleOrDefaultAsync<Failure>(query, new{id});
+
+            db.Close();
+            db.Dispose();
+            return View(failure);
+        }
+
+        [HttpPost, ActionName("Edit")]
+        public async Task<IActionResult> EditPost(int? id, Failure failure)
+        {
+            if(id == null) return NotFound();
+            db.Open();
+            var query = "UPDATE failures SET Name = @Name, Description = @Description, Priority = @Priority, Status = @Status, MachineId = @MachineId WHERE FailureId = '" + @id + "'";
+
+            var param = new DynamicParameters();
+            param.Add("Name", failure.Name);
+            param.Add("Description", failure.Description);
+            param.Add("Priority", failure.Priority);
+            param.Add("Status", failure.Status);
+            param.Add("MachineId", failure.MachineId);
+
+            await db.ExecuteAsync(query, param);
+            db.Close();
+            db.Dispose();
+            return RedirectToAction(nameof(Index));
+        }
+
         [HttpPost]
         public async Task<IActionResult> Delete(int? id)
         {
