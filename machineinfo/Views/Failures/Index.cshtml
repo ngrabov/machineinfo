@@ -60,7 +60,12 @@
                         @item.MachineId
                     </td>
                     <td><a asp-action="Edit" asp-route-id="@item.FailureId">Update</a></td>
-                    <td><a asp-action="Delete" asp-route-id="@item.FailureId" onclick="return confirm('Are you sure you want to delete this?')">Delete</a></td>
+                    <td>
+                        <form asp-action="Delete" asp-route-id="@item.FailureId">
+                            <input type="hidden" asp-for="@item.FailureId" />
+                            <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this?')" />
+                        </form>
+                    </td>
                 </tr>
             }
         </tbody>

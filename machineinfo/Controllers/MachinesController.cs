@@ -67,5 +67,19 @@ namespace machineinfo.Controllers
             var machine = await db.QuerySingleOrDefaultAsync<Machine>(query, new{ id });
             return View(machine);
         }
+
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+
+            var query = "DELETE FROM failures WHERE MachineId = @id";
+            await db.ExecuteAsync(query, new {id});
+            var query2 = "DELETE FROM machines WHERE MachineId = @id";
+            await db.ExecuteAsync(query2, new {id});
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
