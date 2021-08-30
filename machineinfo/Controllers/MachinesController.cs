@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Dapper;
 using System.Threading.Tasks;
 using machineinfo.Models;
+using machineinfo.ViewModels;
 
 namespace machineinfo.Controllers
 {
@@ -56,16 +57,22 @@ namespace machineinfo.Controllers
             return View(machine);
         }
 
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, MachineVM model)
         {
             if(id == null)
             {
                 return NotFound();
             }
+            var vm = new MachineVM();
 
             var query = "SELECT * FROM Machines WHERE MachineId = @Id";
             var machine = await db.QuerySingleOrDefaultAsync<Machine>(query, new{ id });
-            return View(machine);
+            vm.Name = machine.Name;
+
+            var query2 = "SELECT * FROM failures WHERE MachineId = '" + @id + "'";
+            var failures = await db.QueryAsync<Failure>(query2); 
+            vm.Failures = failures;
+            return View(vm);
         }
 
         [HttpGet]

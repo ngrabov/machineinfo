@@ -4,8 +4,9 @@ using machineinfo.Models;
 namespace machineinfo.ViewModels
 {
     #nullable enable
-    public class FailureVM
+    public class MachineVM
     {
-        public IEnumerable<Failure>? failures { get; set; }
+        public string? Name { get; set; }
+        public IEnumerable<Failure>? Failures {get; set;}
     }
 }

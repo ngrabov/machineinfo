@@ -1,7 +1,37 @@
-@model Machine
+@model MachineVM
+@using machineinfo.ViewModels
 
 @{
     ViewData["Title"] = "Machine details";
 }
 
 <h1>@Model.Name</h1>
+
+<div>
+    <div>
+        <h4 style="width: 90%; margin: auto; text-align: center; padding-bottom: 20px;">List of failures for @Model.Name</h4>
+    </div>
+    <table class="table table-hover">
+        <thead>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Machine</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Time created</th>
+        </thead>
+        @foreach (var item in Model.Failures)
+        {
+            <tr>
+                <td>@item.FailureId</td>
+                <td>@item.Name</td>
+                <td>@item.Description</td>
+                <td>@Model.Name</td>
+                <td>@item.Status</td>
+                <td>@item.Priority</td>
+                <td>@item.EntryTime</td>
+            </tr>
+        }
+    </table>
+</div>

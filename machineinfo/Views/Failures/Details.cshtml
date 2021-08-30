@@ -1,5 +1,4 @@
 @model Failure
-@using machineinfo.ViewModels
 
 @{
     ViewData["Title"] = @Model.Name + " details";
@@ -26,7 +25,7 @@
                 <td>@Model.Status</td>
             </tr>
             <tr>
-                <td>MachineId</td>
+                <td>Machine Name</td>
                 <td>@ViewData["MachineName"]</td>
             </tr>
         </tbody>

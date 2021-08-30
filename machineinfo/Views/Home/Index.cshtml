@@ -19,6 +19,9 @@
                 Name
             </th>
             <th>
+                Description
+            </th>
+            <th>
                 Machine
             </th>
             <th>
@@ -38,6 +41,7 @@
                 <tr>
                     <td>@item.FailureId</td>
                     <td><a asp-controller="Failures" asp-action="Details" asp-route-id="@item.FailureId">@item.Name</a></td>
+                    <td>@item.Description</td>
                     <td>@item.MachineId</td>
                     <td>@item.Status</td>
                     <td>@item.Priority</td>
