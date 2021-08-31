@@ -5,8 +5,7 @@ using machineinfo.Models;
 using System.Data;
 using Dapper;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using Npgsql;
+using machineinfo.ViewModels;
 
 namespace machineinfo.Controllers
 {

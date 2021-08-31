@@ -34,7 +34,7 @@ namespace machineinfo.Controllers
             return View();
         }
 
-        [HttpPost] //Rijesi problem sa nepostojecim IDom za ovo i Edit!!
+        [HttpPost] 
         public async Task<IActionResult> Create([Bind("Name,Description,Priority,Status,EntryTime,MachineId")]Failure failure, IFormFile file)
         {
             try
@@ -56,11 +56,10 @@ namespace machineinfo.Controllers
                 db.Close();
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch(System.Exception e)
             {
-                ModelState.AddModelError("", "Bad model state");
+                ModelState.AddModelError("", e.Message);
             }
-            ModelState.AddModelError("", "Bad model state.");
             return View(failure);
         }
 

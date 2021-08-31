@@ -8,5 +8,6 @@ namespace machineinfo.ViewModels
     {
         public string? Name { get; set; }
         public IEnumerable<Failure>? Failures {get; set;}
+        public IEnumerable<Machine>? Machines {get; set;}
     }
 }
