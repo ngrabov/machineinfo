@@ -2,8 +2,15 @@
 
 @{
     ViewData["Title"] = "Update failure";
+    @if (ViewBag.Message != null)
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                alert("@ViewBag.Message");
+            };
+        </script>
+    }
 }
-
 <div style="padding: 0 15px 0 15px;">
     <h1>Update failure</h1>
 
@@ -14,15 +21,16 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group">
                     <label asp-for="Name" class="control-label"></label>
-                    <input asp-for="Name" class="form-control" />
+                    <input asp-for="Name" id="txtinput" onkeyup="if(this.value.length > 20) document.getElementById('desc').disabled = false; else document.getElementById('desc').disabled = true;" class="form-control" />
                 </div>
                 <div class="form-group">
                     <label asp-for="Description" class="control-label"></label>
-                    <input asp-for="Description" class="form-control" />
+                    <input asp-for="Description" id="desc" class="form-control" disabled/>
                 </div>
                 <div class="form-group">
                     <label asp-for="MachineId" class="control-label"></label>
-                    <input asp-for="MachineId" class="form-control" maxlength="5" minlength="1" data-val="true" data-val-required="Required field." />
+                    <input asp-for="MachineId" class="form-control"/>
+                    <span asp-validation-for="MachineId" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Priority"></label>

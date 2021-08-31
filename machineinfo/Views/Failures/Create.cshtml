@@ -1,27 +1,11 @@
 @model Failure
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
     ViewData["Title"] = "Create failure";
 }
 
-
-<script>
-    document.getElementById("txtinput").on("keyup", function(){
-        if(this.val().length > 20)
-        {
-            document.getElementById("desc").disabled = false;
-        }
-        else
-        {
-            document.getElementById("desc").disabled = true;
-        }
-    });
-</script>
-
 <div style="padding: 0 15px 0 15px;">
     <h1>Create a failure</h1>
-
     <hr />
     <div class="row">
         <div class="col-md-4">
@@ -54,7 +38,6 @@
                         <option value="">--Select status--</option>
                     </select>
                 </div>
-                
                 <div class="form-group">
                     <input type="submit" value="Create" class="btn btn-primary" />
                 </div>

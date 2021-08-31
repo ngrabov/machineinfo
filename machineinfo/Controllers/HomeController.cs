@@ -5,7 +5,6 @@ using machineinfo.Models;
 using System.Data;
 using Dapper;
 using System.Threading.Tasks;
-using machineinfo.ViewModels;
 
 namespace machineinfo.Controllers
 {

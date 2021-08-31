@@ -97,21 +97,45 @@ namespace machineinfo.Controllers
         [HttpPost, ActionName("Edit")]
         public async Task<IActionResult> EditPost(int? id, Failure failure)
         {
-            if(id == null) return NotFound();
-            db.Open();
-            var query = "UPDATE failures SET Name = @Name, Description = @Description, Priority = @Priority, Status = @Status, MachineId = @MachineId WHERE FailureId = '" + @id + "'";
+            try
+            {
+                if(id == null) return NotFound();
+                db.Open();
+                var query = "UPDATE failures SET Name = @Name, Description = @Description, Priority = @Priority, Status = @Status, MachineId = @MachineId WHERE FailureId = '" + @id + "'";
 
-            var param = new DynamicParameters();
-            param.Add("Name", failure.Name);
-            param.Add("Description", failure.Description);
-            param.Add("Priority", failure.Priority);
-            param.Add("Status", failure.Status);
-            param.Add("MachineId", failure.MachineId);
+                var param = new DynamicParameters();
+                param.Add("Name", failure.Name);
+                param.Add("Description", failure.Description);
+                param.Add("Priority", failure.Priority);
+                param.Add("Status", failure.Status);
+                param.Add("MachineId", failure.MachineId);
 
-            await db.ExecuteAsync(query, param);
-            db.Close();
-            db.Dispose();
-            return RedirectToAction(nameof(Index));
+                var query2 = "SELECT MachineId FROM machines";
+                var machines = await db.QueryAsync<Machine>(query2);
+
+                int c = 0;
+                foreach(var v in machines)
+                {
+                    if(failure.MachineId == v.MachineId)
+                    {
+                        c++;
+                    }
+                }
+                if(c == 0)
+                {
+                    return Json("No matching Machine found for the selected ID.");
+                } 
+
+                await db.ExecuteAsync(query, param);
+                db.Close();
+                db.Dispose();
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                ModelState.AddModelError("Error", "No match");
+            }
+            return View(failure);
         }
 
         public async Task<IActionResult> Resolve(int? id)
