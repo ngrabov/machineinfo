@@ -23,6 +23,6 @@ namespace machineinfo.Models
         public Status Status { get; set; }
         public DateTime EntryTime { get; set; }
         public int MachineId { get; set; }
-        public ICollection<IFormFile> files { get; set; }
+        public List<IFormFile> files { get; set; }
     }
 }

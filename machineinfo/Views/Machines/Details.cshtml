@@ -25,7 +25,7 @@
         {
             <tr>
                 <td>@item.FailureId</td>
-                <td>@item.Name</td>
+                <td><a asp-controller="Failures" asp-action="Details" asp-route-id="@item.FailureId">@item.Name</a></td>
                 <td>@item.Description</td>
                 <td>@Model.Name</td>
                 <td>@item.Status</td>
@@ -34,4 +34,7 @@
             </tr>
         }
     </table>
+</div>
+<div>
+    <a asp-action="Index">Back to list</a>
 </div>

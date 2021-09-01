@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Dapper;
 using machineinfo.Models;
 using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
+using System.IO;
 
 namespace machineinfo.Controllers
 {
@@ -35,12 +37,13 @@ namespace machineinfo.Controllers
         }
 
         [HttpPost] 
-        public async Task<IActionResult> Create([Bind("Name,Description,Priority,Status,EntryTime,MachineId")]Failure failure, IFormFile file)
+        public async Task<IActionResult> Create([Bind("Name,Description,Priority,Status,EntryTime,MachineId")]Failure failure, List<IFormFile> files)
         {
             try
             {
                 db.Open();
-                
+                /* 
+                var fs = Fi */
                 var query = "INSERT INTO Failures (Name, Description, Priority, Status, EntryTime, MachineId) VALUES (@Name, @Description, @Priority, @Status, current_timestamp, @MachineId)";
                 
                 var parameters = new DynamicParameters();
@@ -123,7 +126,7 @@ namespace machineinfo.Controllers
                 }
                 if(c == 0)
                 {
-                    return Json("No matching Machine found for the selected ID.");
+                    return Content("No matching Machine found for the selected ID.");
                 } 
 
                 await db.ExecuteAsync(query, param);
