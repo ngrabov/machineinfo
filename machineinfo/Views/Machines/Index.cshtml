@@ -21,7 +21,7 @@
             <th></th>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @foreach (var item in Model.OrderBy(c => c.MachineId))
             {
                 <tr>
                     <td>@item.MachineId</td>

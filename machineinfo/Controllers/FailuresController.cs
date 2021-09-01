@@ -37,7 +37,7 @@ namespace machineinfo.Controllers
         }
 
         [HttpPost] 
-        public async Task<IActionResult> Create([Bind("Name,Description,Priority,Status,EntryTime,MachineId")]Failure failure, List<IFormFile> files)
+        public async Task<IActionResult> Create([Bind("Name,Description,Priority,Status,EntryTime,MachineId,Files")]Failure failure, List<IFormFile> files)
         {
             try
             {
