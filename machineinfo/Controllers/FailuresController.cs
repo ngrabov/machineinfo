@@ -7,6 +7,8 @@ using machineinfo.Models;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.IO;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 
 namespace machineinfo.Controllers
 {
@@ -37,24 +39,44 @@ namespace machineinfo.Controllers
         }
 
         [HttpPost] 
-        public async Task<IActionResult> Create([Bind("Name,Description,Priority,Status,EntryTime,MachineId,Files")]Failure failure, List<IFormFile> files)
+        public async Task<IActionResult> Create([Bind("Name,Description,Priority,Status,EntryTime,MachineId,Stream,fileURLs")]Failure failure, List<IFormFile> files)
         {
             try
             {
                 db.Open();
-                /* 
-                var fs = Fi */
+                
+                foreach(var file in files)
+                {
+                    string ext = file.FileName;
+                    string pth = Path.GetTempFileName();
+                    string nx = Path.GetFileNameWithoutExtension(ext);
+                    string wbp = Path.GetFileName(ext);
+
+                    Account account = new Account("dsjavparg", "351856923196787", "rANgXE5HEDwuyV3QThqfJiRs8Zg");
+                    Cloudinary cloudinary = new Cloudinary(account);
+
+                    using(var stream = System.IO.File.Create(pth))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+                    
+                    RawUploadParams uploadParams = new RawUploadParams()
+                    {
+                        File = new FileDescription(pth), 
+                        PublicId = nx
+                    };
+
+                    UploadResult uploadResult = cloudinary.Upload(uploadParams);
+                    failure.fileURLs.Add(wbp);
+                }
+                
                 var query = "INSERT INTO Failures (Name, Description, Priority, Status, EntryTime, MachineId) VALUES (@Name, @Description, @Priority, @Status, current_timestamp, @MachineId)";
                 
-                var parameters = new DynamicParameters();
-                parameters.Add("Name", failure.Name);
-                parameters.Add("Description", failure.Description);
-                parameters.Add("Priority", failure.Priority);
-                parameters.Add("Status", failure.Status);
-                parameters.Add("EntryTime", System.DateTime.Now);
-                parameters.Add("MachineId", failure.MachineId);
-                
-                await db.ExecuteAsync(query, parameters);
+                db.Execute(query, new[]{
+                    new{Name = failure.Name, Description = failure.Description, Priority = failure.Priority, 
+                    Status = failure.Status, EntryTime = System.DateTime.Now, MachineId = failure.MachineId/* , fileURL =  */}
+                });
+
                 db.Dispose();
                 db.Close();
                 return RedirectToAction(nameof(Index));
@@ -63,6 +85,7 @@ namespace machineinfo.Controllers
             {
                 ModelState.AddModelError("", e.Message);
             }
+
             return View(failure);
         }
 
