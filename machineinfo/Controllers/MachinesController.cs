@@ -24,7 +24,6 @@ namespace machineinfo.Controllers
             db.Open();
             var query = "SELECT * FROM Machines";
             var machines = await db.QueryAsync<Machine>(query);
-            db.Close();
             db.Dispose();
             return View(machines);
         }
@@ -46,7 +45,6 @@ namespace machineinfo.Controllers
 
                 await db.ExecuteAsync(query, param);
                 db.Dispose();
-                db.Close();
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -87,7 +85,6 @@ namespace machineinfo.Controllers
             var query = "SELECT * FROM machines WHERE MachineId = @id";
             var machine = await db.QuerySingleOrDefaultAsync<Machine>(query, new{id});
 
-            db.Close();
             db.Dispose();
             return View(machine);
         }
@@ -105,7 +102,6 @@ namespace machineinfo.Controllers
                 param.Add("Name", machine.Name);
 
                 await db.ExecuteAsync(query, machine);
-                db.Close();
                 db.Dispose();
                 return RedirectToAction(nameof(Index));
             }
@@ -128,7 +124,6 @@ namespace machineinfo.Controllers
             var query2 = "DELETE FROM machines WHERE MachineId = @id";
             await db.ExecuteAsync(query2, new {id});
             db.Close();
-            db.Dispose();
             return RedirectToAction(nameof(Index));
         }
     }

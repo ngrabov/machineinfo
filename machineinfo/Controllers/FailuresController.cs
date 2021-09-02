@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
-using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using Dapper;
 using machineinfo.Models;
@@ -12,12 +11,10 @@ namespace machineinfo.Controllers
 {
     public class FailuresController : Controller
     {
-        private readonly ILogger<FailuresController> _logger;
         private IDbConnection db;
 
-        public FailuresController(ILogger<FailuresController> logger, IDbConnection db)
+        public FailuresController(IDbConnection db)
         {
-            _logger = logger;
             this.db = db;
         }
 
@@ -26,7 +23,6 @@ namespace machineinfo.Controllers
             var query = "SELECT * FROM failures";
             db.Open();
             var failure = await db.QueryAsync<Failure>(query);
-            db.Close();
             db.Dispose();
             return View(failure);
         }
@@ -66,7 +62,6 @@ namespace machineinfo.Controllers
                 });
 
                 db.Dispose();
-                db.Close();
                 return RedirectToAction(nameof(Index));
             }
             catch(System.Exception e)
@@ -103,7 +98,6 @@ namespace machineinfo.Controllers
             var query = "SELECT * FROM failures WHERE FailureId = @id";
             var failure = await db.QuerySingleOrDefaultAsync<Failure>(query, new{id});
 
-            db.Close();
             db.Dispose();
             return View(failure);
         }
@@ -159,7 +153,6 @@ namespace machineinfo.Controllers
                 } 
 
                 await db.ExecuteAsync(query, param);
-                db.Close();
                 db.Dispose();
                 return RedirectToAction(nameof(Index));
             }
@@ -180,7 +173,6 @@ namespace machineinfo.Controllers
 
             var query = "UPDATE failures SET Status = '1' WHERE FailureId = '" + @id + "'";
             await db.ExecuteAsync(query, new{id});
-            db.Close();
             db.Dispose();
             return RedirectToAction("Index", "Home");
         }
