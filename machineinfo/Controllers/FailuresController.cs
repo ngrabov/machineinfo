@@ -44,7 +44,7 @@ namespace machineinfo.Controllers
             try
             {
                 db.Open();
-                
+                string fileURLs = "";
                 foreach(var file in files)
                 {
                     string ext = file.FileName;
@@ -52,29 +52,19 @@ namespace machineinfo.Controllers
                     string nx = Path.GetFileNameWithoutExtension(ext);
                     string wbp = Path.GetFileName(ext);
 
-                    Account account = new Account("dsjavparg", "351856923196787", "rANgXE5HEDwuyV3QThqfJiRs8Zg");
-                    Cloudinary cloudinary = new Cloudinary(account);
-
-                    using(var stream = System.IO.File.Create(pth))
+                    using(var stream = System.IO.File.Create("./wwwroot/" + wbp))
                     {
                         await file.CopyToAsync(stream);
                     }
                     
-                    RawUploadParams uploadParams = new RawUploadParams()
-                    {
-                        File = new FileDescription(pth), 
-                        PublicId = nx
-                    };
-
-                    UploadResult uploadResult = cloudinary.Upload(uploadParams);
-                    failure.fileURLs.Add(wbp);
+                    fileURLs += wbp + " ";
                 }
-                
-                var query = "INSERT INTO Failures (Name, Description, Priority, Status, EntryTime, MachineId) VALUES (@Name, @Description, @Priority, @Status, current_timestamp, @MachineId)";
+                failure.fileURLs = fileURLs;
+                var query = "INSERT INTO Failures (Name, Description, Priority, Status, EntryTime, MachineId, fileURLs) VALUES (@Name, @Description, @Priority, @Status, current_timestamp, @MachineId, @fileURLs)";
                 
                 db.Execute(query, new[]{
                     new{Name = failure.Name, Description = failure.Description, Priority = failure.Priority, 
-                    Status = failure.Status, EntryTime = System.DateTime.Now, MachineId = failure.MachineId/* , fileURL =  */}
+                    Status = failure.Status, EntryTime = System.DateTime.Now, MachineId = failure.MachineId, fileURLs = failure.fileURLs}
                 });
 
                 db.Dispose();
@@ -121,13 +111,30 @@ namespace machineinfo.Controllers
         }
 
         [HttpPost, ActionName("Edit")]
-        public async Task<IActionResult> EditPost(int? id, Failure failure)
+        public async Task<IActionResult> EditPost(int? id, Failure failure, List<IFormFile> files)
         {
             try
             {
                 if(id == null) return NotFound();
                 db.Open();
-                var query = "UPDATE failures SET Name = @Name, Description = @Description, Priority = @Priority, Status = @Status, MachineId = @MachineId WHERE FailureId = '" + @id + "'";
+
+                string fileURLs = "";
+                foreach(var file in files)
+                {
+                    string ext = file.FileName;
+                    string pth = Path.GetTempFileName();
+                    string nx = Path.GetFileNameWithoutExtension(ext);
+                    string wbp = Path.GetFileName(ext);
+
+                    using(var stream = System.IO.File.Create("./wwwroot/" + wbp))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+                    
+                    fileURLs += wbp + " ";
+                }
+                failure.fileURLs = fileURLs;
+                var query = "UPDATE failures SET Name = @Name, Description = @Description, Priority = @Priority, Status = @Status, MachineId = @MachineId, fileURLs = @fileURLs WHERE FailureId = '" + @id + "'";
 
                 var param = new DynamicParameters();
                 param.Add("Name", failure.Name);
@@ -135,6 +142,7 @@ namespace machineinfo.Controllers
                 param.Add("Priority", failure.Priority);
                 param.Add("Status", failure.Status);
                 param.Add("MachineId", failure.MachineId);
+                param.Add("fileURLS", failure.fileURLs);
 
                 var query2 = "SELECT MachineId FROM machines";
                 var machines = await db.QueryAsync<Machine>(query2);

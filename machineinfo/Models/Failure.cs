@@ -24,7 +24,7 @@ namespace machineinfo.Models
         public DateTime EntryTime { get; set; }
         public int MachineId { get; set; }
         public byte[] Stream { get; set; }
-        public List<string> fileURLs { get; set;}
+        public string fileURLs { get; set;}
         public List<IFormFile> files { get; set; }
     }
 }

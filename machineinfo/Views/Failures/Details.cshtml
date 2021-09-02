@@ -2,6 +2,11 @@
 
 @{
     ViewData["Title"] = @Model.Name + " details";
+    string[] tarray = new string[]{};
+    if(Model.fileURLs != null)
+    {
+        tarray = Model.fileURLs.Split(" ");
+    } 
 }
 
 <h1>@Model.Name</h1>
@@ -28,14 +33,14 @@
                 <td>Machine Name</td>
                 <td>@ViewData["MachineName"]</td>
             </tr>
-            @* @foreach (var item in Model.files)
-            {
-                <tr>
-                    <td>@item.FileName</td>
-                </tr>
-            } *@
         </tbody>
     </table>
+    <div>
+        @foreach (var item in tarray)
+        {
+            <div style="padding-top: 15px;"><a href="~/../@item">@item</a></div>
+        }
+    </div>
 </div>
 <div>
     <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.FailureId">Edit</a>
