@@ -7,8 +7,6 @@ using machineinfo.Models;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.IO;
-using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
 
 namespace machineinfo.Controllers
 {
