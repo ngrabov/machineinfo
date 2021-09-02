@@ -27,7 +27,7 @@ namespace machineinfo
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddTransient<IDbConnection>((sp) => new NpgsqlConnection("Host=localhost;Port=5432;Username=postgres;Password=manager123;Database=postgres;"));
+            services.AddTransient<IDbConnection>((sp) => new NpgsqlConnection(Configuration.GetConnectionString("postgres")));
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
