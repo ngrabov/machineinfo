@@ -17,10 +17,8 @@ namespace machineinfo.Data
 
         public async Task<IEnumerable<Failure>> GetFailuresByPriorityAsync()
         {
-            db.Open();
             var query = "SELECT * FROM Failures WHERE Status = '0' ORDER BY Priority, EntryTime";
             var failures = await db.QueryAsync<Failure>(query);
-            db.Dispose();
             return failures;
         }
     }

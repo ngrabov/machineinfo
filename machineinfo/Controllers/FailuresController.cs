@@ -1,14 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Threading.Tasks;
-using Dapper;
 using machineinfo.Models;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.IO;
 using machineinfo.Data;
-using machineinfo.ViewModels;
-using System.Linq;
 
 namespace machineinfo.Controllers
 {
@@ -49,7 +46,7 @@ namespace machineinfo.Controllers
                         await file.CopyToAsync(stream);
                     }
                     
-                    fileURLs += wbp + " ";
+                    fileURLs += wbp + "|";
                 }
                 failure.fileURLs = fileURLs;
                 failureRepository.Create(failure, files);
@@ -70,8 +67,7 @@ namespace machineinfo.Controllers
                 return NotFound();
             }
             
-            var q = "SELECT Failures.FailureId, Failures.Name, Failures.Priority, Failures.Description, Failures.Status, Failures.fileURLs, Machines.MachineName FROM Failures JOIN Machines ON Machines.MachineId = Failures.MachineId WHERE Failures.FailureID = " + @id;
-            var vm = await db.QuerySingleOrDefaultAsync<FailureVM>(q);
+            var vm = await failureRepository.GetFailureDetailsAsync(id);
             return View(vm);
         }
 
@@ -81,12 +77,7 @@ namespace machineinfo.Controllers
             {
                 return NotFound();
             }
-            db.Open();
-
-            var query = "SELECT * FROM failures WHERE FailureId = @id";
-            var failure = await db.QuerySingleOrDefaultAsync<Failure>(query, new{id});
-
-            db.Dispose();
+            var failure = await failureRepository.GetFailureByIDAsync(id);
             return View(failure);
         }
 
@@ -96,7 +87,6 @@ namespace machineinfo.Controllers
             try
             {
                 if(id == null) return NotFound();
-                db.Open();
 
                 string fileURLs = "";
                 foreach(var file in files)
@@ -108,37 +98,11 @@ namespace machineinfo.Controllers
                         await file.CopyToAsync(stream);
                     }
                     
-                    fileURLs += wbp + " ";
+                    fileURLs += wbp + "|";
                 }
                 failure.fileURLs = fileURLs;
-                var query = "UPDATE failures SET Name = @Name, Description = @Description, Priority = @Priority, Status = @Status, MachineId = @MachineId, fileURLs = @fileURLs WHERE FailureId = '" + @id + "'";
-
-                var param = new DynamicParameters();
-                param.Add("Name", failure.Name);
-                param.Add("Description", failure.Description);
-                param.Add("Priority", failure.Priority);
-                param.Add("Status", failure.Status);
-                param.Add("MachineId", failure.MachineId);
-                param.Add("fileURLS", failure.fileURLs);
-
-                var query2 = "SELECT MachineId FROM machines";
-                var machines = await db.QueryAsync<Machine>(query2);
-
-                int c = 0;
-                foreach(var v in machines)
-                {
-                    if(failure.MachineId == v.MachineId)
-                    {
-                        c++;
-                    }
-                }
-                if(c == 0)
-                {
-                    return Content("No matching Machine found for the selected ID.");
-                } 
-
-                await db.ExecuteAsync(query, param);
-                db.Dispose();
+                failureRepository.Update(id, failure);
+                
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -148,30 +112,27 @@ namespace machineinfo.Controllers
             return View(failure);
         }
 
-        public async Task<IActionResult> Resolve(int? id)
+        public IActionResult Resolve(int? id)
         {
             if(id == null)
             {
                 return NotFound();
             }
-            db.Open();
 
-            var query = "UPDATE failures SET Status = '1' WHERE FailureId = '" + @id + "'";
-            await db.ExecuteAsync(query, new{id});
-            db.Dispose();
+            failureRepository.Resolve(id);
+            
             return RedirectToAction("Index", "Home");
         }
 
         [HttpPost]
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
             if(id == null)
             {
                 return NotFound();
             }
 
-            var query = "DELETE FROM failures WHERE FailureId = @Id";
-            await db.ExecuteAsync(query, new {id});
+            failureRepository.Delete(id);
             return RedirectToAction(nameof(Index));
         }
     }
