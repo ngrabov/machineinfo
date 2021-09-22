@@ -6,6 +6,6 @@ namespace machineinfo.Models
     {
         [Key]
         public int MachineId { get; set; }
-        public string Name { get; set; }
+        public string MachineName { get; set; }
     }
 }

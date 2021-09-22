@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using machineinfo.Models;
 using System.Data;
-using Dapper;
+using machineinfo.Data;
 using System.Threading.Tasks;
 
 namespace machineinfo.Controllers
@@ -11,21 +11,16 @@ namespace machineinfo.Controllers
     
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-        private IDbConnection db;
+        private IHomeRepository homeRepository;
 
-        public HomeController(ILogger<HomeController> logger, IDbConnection db)
+        public HomeController(IHomeRepository homeRepository)
         {
-            _logger = logger;
-            this.db = db;
+            this.homeRepository = homeRepository;
         }
 
         public async Task<IActionResult> Index()
         {
-            db.Open();
-            var query = "SELECT * FROM Failures WHERE Status = '0' ORDER BY Priority, EntryTime";
-            var failures = await db.QueryAsync<Failure>(query);
-            db.Dispose();
+            var failures = await homeRepository.GetFailuresByPriorityAsync();
             return View(failures);
         }
 

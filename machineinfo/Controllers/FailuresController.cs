@@ -6,24 +6,26 @@ using machineinfo.Models;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.IO;
+using machineinfo.Data;
+using machineinfo.ViewModels;
+using System.Linq;
 
 namespace machineinfo.Controllers
 {
     public class FailuresController : Controller
     {
         private IDbConnection db;
+        private IFailureRepository failureRepository;
 
-        public FailuresController(IDbConnection db)
+        public FailuresController(IDbConnection db, IFailureRepository failureRepository)
         {
             this.db = db;
+            this.failureRepository = failureRepository;
         }
 
         public async Task<IActionResult> Index()
         {
-            var query = "SELECT * FROM failures";
-            db.Open();
-            var failure = await db.QueryAsync<Failure>(query);
-            db.Dispose();
+            var failure = await failureRepository.GetFailuresAsync();
             return View(failure);
         }
 
@@ -37,14 +39,10 @@ namespace machineinfo.Controllers
         {
             try
             {
-                db.Open();
                 string fileURLs = "";
                 foreach(var file in files)
                 {
-                    string ext = file.FileName;
-                    string pth = Path.GetTempFileName();
-                    string nx = Path.GetFileNameWithoutExtension(ext);
-                    string wbp = Path.GetFileName(ext);
+                    string wbp = Path.GetFileName(file.FileName);
 
                     using(var stream = System.IO.File.Create("./wwwroot/" + wbp))
                     {
@@ -54,14 +52,7 @@ namespace machineinfo.Controllers
                     fileURLs += wbp + " ";
                 }
                 failure.fileURLs = fileURLs;
-                var query = "INSERT INTO Failures (Name, Description, Priority, Status, EntryTime, MachineId, fileURLs) VALUES (@Name, @Description, @Priority, @Status, current_timestamp, @MachineId, @fileURLs)";
-                
-                db.Execute(query, new[]{
-                    new{Name = failure.Name, Description = failure.Description, Priority = failure.Priority, 
-                    Status = failure.Status, EntryTime = System.DateTime.Now, MachineId = failure.MachineId, fileURLs = failure.fileURLs}
-                });
-
-                db.Dispose();
+                failureRepository.Create(failure, files);
                 return RedirectToAction(nameof(Index));
             }
             catch(System.Exception e)
@@ -78,13 +69,10 @@ namespace machineinfo.Controllers
             {
                 return NotFound();
             }
-
-            var query = "SELECT * FROM failures WHERE FailureID = @Id";
-            var failure = await db.QuerySingleOrDefaultAsync<Failure>(query, new {id});
-            var name = "SELECT Name FROM Machines WHERE MachineId = '" + @failure.MachineId + "'";
-            var mac = await db.QuerySingleOrDefaultAsync<Machine>(name, new{failure.MachineId});
-            ViewData["MachineName"] = mac.Name;
-            return View(failure);
+            
+            var q = "SELECT Failures.FailureId, Failures.Name, Failures.Priority, Failures.Description, Failures.Status, Failures.fileURLs, Machines.MachineName FROM Failures JOIN Machines ON Machines.MachineId = Failures.MachineId WHERE Failures.FailureID = " + @id;
+            var vm = await db.QuerySingleOrDefaultAsync<FailureVM>(q);
+            return View(vm);
         }
 
         public async Task<IActionResult> Edit(int? id)
@@ -113,10 +101,7 @@ namespace machineinfo.Controllers
                 string fileURLs = "";
                 foreach(var file in files)
                 {
-                    string ext = file.FileName;
-                    string pth = Path.GetTempFileName();
-                    string nx = Path.GetFileNameWithoutExtension(ext);
-                    string wbp = Path.GetFileName(ext);
+                    string wbp = Path.GetFileName(file.FileName);
 
                     using(var stream = System.IO.File.Create("./wwwroot/" + wbp))
                     {

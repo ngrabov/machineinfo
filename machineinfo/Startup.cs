@@ -30,6 +30,10 @@ namespace machineinfo
             services.AddTransient<IDbConnection>((sp) => new NpgsqlConnection(Configuration.GetConnectionString("postgres")));
             services.AddControllersWithViews();
             services.AddRazorPages();
+
+            services.AddScoped<IHomeRepository, HomeRepository>();
+            services.AddScoped<IMachineRepository, MachineRepository>();
+            services.AddScoped<IFailureRepository, FailureRepository>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

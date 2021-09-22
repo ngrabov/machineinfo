@@ -34,14 +34,14 @@ namespace machineinfo.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("Name")]Machine machine)
+        public async Task<IActionResult> Create([Bind("MachineName")]Machine machine)
         {
             try
             {
                 db.Open();
-                var query = "INSERT INTO machines (Name) VALUES (@Name)";
+                var query = "INSERT INTO machines (MachineName) VALUES (@Name)";
                 var param = new DynamicParameters();
-                param.Add("Name", machine.Name);
+                param.Add("Name", machine.MachineName);
 
                 await db.ExecuteAsync(query, param);
                 db.Dispose();
@@ -65,7 +65,7 @@ namespace machineinfo.Controllers
 
             var query = "SELECT * FROM Machines WHERE MachineId = @Id";
             var machine = await db.QuerySingleOrDefaultAsync<Machine>(query, new{ id });
-            vm.Name = machine.Name;
+            vm.Name = machine.MachineName;
 
             var query2 = "SELECT * FROM failures WHERE MachineId = '" + @id + "'";
             var failures = await db.QueryAsync<Failure>(query2); 
@@ -96,10 +96,10 @@ namespace machineinfo.Controllers
             try
             {
                 db.Open();
-                var query = "UPDATE Machines SET Name = @Name WHERE MachineId = '" + @id + "'";
+                var query = "UPDATE Machines SET MachineName = @MachineName WHERE MachineId = '" + @id + "'";
 
                 var param = new DynamicParameters();
-                param.Add("Name", machine.Name);
+                param.Add("MachineName", machine.MachineName);
 
                 await db.ExecuteAsync(query, machine);
                 db.Dispose();
