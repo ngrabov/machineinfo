@@ -49,7 +49,11 @@ namespace machineinfo.Controllers
                     fileURLs += wbp + "|";
                 }
                 failure.fileURLs = fileURLs;
-                failureRepository.Create(failure, files);
+                var m = failureRepository.Create(failure, files);
+                if(m == 0)
+                {
+                    return Content("There's already an active failure on the selected machine. Try again.");
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch(System.Exception e)

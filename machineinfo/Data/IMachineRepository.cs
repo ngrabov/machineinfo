@@ -8,10 +8,10 @@ namespace machineinfo.Data
     public interface IMachineRepository
     {
         Task<IEnumerable<Machine>> GetMachinesAsync();
-        void CreateAsync(Machine machine);
+        int Create(Machine machine);
         Task<IEnumerable<FailureVM>> GetMachineByIDAsync(int? id);
         Task<Machine> MachineToUpdateAsync(int? id);
-        void UpdateAsync(int? id, Machine machine);
-        void DeleteAsync(int? id);
+        int Update(int? id, Machine machine);
+        void Delete(int? id);
     }
 }

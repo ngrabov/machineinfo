@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
-using Dapper;
 using machineinfo.Data;
 using System.Threading.Tasks;
 using machineinfo.Models;
@@ -34,7 +33,11 @@ namespace machineinfo.Controllers
         {
             try
             {
-                machineRepository.CreateAsync(machine);
+                var k = machineRepository.Create(machine);
+                if(k == 0)
+                {
+                    return Content("There's already a machine with the same name in the database. Try again.");
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -73,8 +76,11 @@ namespace machineinfo.Controllers
             if(id == null) return NotFound();
             try
             {
-                machineRepository.UpdateAsync(id, machine);
-
+                var j = machineRepository.Update(id, machine);
+                if(j == 0)
+                {
+                    return Content("There's already a machine with the same name in the database. Try again.");
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch(System.Exception ex)
@@ -91,7 +97,7 @@ namespace machineinfo.Controllers
                 return NotFound();
             }
             
-            machineRepository.DeleteAsync(id);
+            machineRepository.Delete(id);
             return RedirectToAction(nameof(Index));
         }
     }

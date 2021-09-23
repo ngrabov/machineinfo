@@ -9,7 +9,7 @@ namespace machineinfo.Data
     public interface IFailureRepository
     {
         Task<IEnumerable<FailureVM>> GetFailuresAsync();
-        void Create(Failure failure, List<IFormFile> files);
+        int Create(Failure failure, List<IFormFile> files);
         Task<FailureVM> GetFailureDetailsAsync(int? id);
         Task<Failure> GetFailureByIDAsync(int? id);
         void Update(int? id, Failure failure);

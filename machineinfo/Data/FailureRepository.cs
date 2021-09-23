@@ -23,11 +23,13 @@ namespace machineinfo.Data
             return await db.QueryAsync<FailureVM>(query);
         }
 
-        public void Create(Failure failure, List<IFormFile> files)
+        public int Create(Failure failure, List<IFormFile> files)
         {
-            var query = "INSERT INTO Failures (Name, Description, Priority, Status, EntryTime, MachineId, fileURLs) VALUES (@Name, @Description, @Priority, @Status, current_timestamp, @MachineId, @fileURLs)";
+            var query = "INSERT INTO Failures (Name, Description, Priority, Status, EntryTime, MachineId, fileURLs) " +
+             "SELECT @Name, @Description, @Priority, @Status, current_timestamp, @MachineId, @fileURLs WHERE NOT EXISTS (SELECT " + 
+             " FailureId FROM Failures WHERE Status = '0' AND MachineId = @MachineId)";
             
-            db.Execute(query, new[]{
+            return db.Execute(query, new[]{
                 new{Name = failure.Name, Description = failure.Description, Priority = failure.Priority, 
                 Status = failure.Status, EntryTime = System.DateTime.Now, MachineId = failure.MachineId, fileURLs = failure.fileURLs}
             });

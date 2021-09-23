@@ -22,10 +22,10 @@ namespace machineinfo.Data
             return await db.QueryAsync<Machine>(query);
         }
 
-        public async void CreateAsync(Machine machine)
+        public int Create(Machine machine)
         {
-            var query = "INSERT INTO machines (MachineName) VALUES (@MachineName)";
-            await db.ExecuteAsync(query, new[]{new{MachineName = machine.MachineName}});
+            var query = "INSERT INTO machines (MachineName) SELECT @MachineName WHERE NOT EXISTS (SELECT MachineName FROM Machines WHERE MachineName = @MachineName)";
+            return db.Execute(query, new[]{new{MachineName = machine.MachineName}});
         }
 
         public async Task<IEnumerable<FailureVM>> GetMachineByIDAsync(int? id)
@@ -40,20 +40,20 @@ namespace machineinfo.Data
             return await db.QuerySingleOrDefaultAsync<Machine>(query, new{id});
         }
 
-        public async void UpdateAsync(int? id, Machine machine)
+        public int Update(int? id, Machine machine)
         {
-            var query = "UPDATE Machines SET MachineName = @MachineName WHERE MachineId = '" + @id + "'";
+            var query = "UPDATE Machines SET MachineName = @MachineName WHERE MachineId = '" + @id + "' AND  NOT EXISTS (SELECT MachineName FROM Machines WHERE MachineName = @MachineName)";
 
             var param = new DynamicParameters();
             param.Add("MachineName", machine.MachineName);
 
-            await db.ExecuteAsync(query, param);
+            return db.Execute(query, param);
         }
 
-        public async void DeleteAsync(int? id)
+        public void Delete(int? id)
         {
             var query = "DELETE FROM Machines WHERE MachineId = @id";
-            await db.ExecuteAsync(query, new {id});
+            db.Execute(query, new {id});
         }
     }
 }
