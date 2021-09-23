@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using machineinfo.Models;
-using System.Data;
 using machineinfo.Data;
 using System.Threading.Tasks;
 

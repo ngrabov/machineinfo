@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System;
 using machineinfo.Models;
 
 namespace machineinfo.ViewModels
@@ -13,5 +13,6 @@ namespace machineinfo.ViewModels
         public Status? Status { get; set;}
         public string? fileURLs { get; set; }
         public string? MachineName { get; set; }
+        public DateTime EntryTime { get; set; }
     }
 }

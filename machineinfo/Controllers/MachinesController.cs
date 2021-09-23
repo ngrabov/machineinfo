@@ -1,30 +1,26 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
-using Microsoft.Extensions.Logging;
 using Dapper;
+using machineinfo.Data;
 using System.Threading.Tasks;
 using machineinfo.Models;
-using machineinfo.ViewModels;
 
 namespace machineinfo.Controllers
 {
     public class MachinesController : Controller
     {
-        private readonly ILogger<MachinesController> _logger;
         private IDbConnection db;
+        private IMachineRepository machineRepository;
 
-        public MachinesController(ILogger<MachinesController> logger, IDbConnection db)
+        public MachinesController(IDbConnection db, IMachineRepository machineRepository)
         {
-            _logger = logger;
             this.db = db;
+            this.machineRepository = machineRepository;
         }
 
         public async Task<IActionResult> Index()
         {
-            db.Open();
-            var query = "SELECT * FROM Machines";
-            var machines = await db.QueryAsync<Machine>(query);
-            db.Dispose();
+            var machines = await machineRepository.GetMachinesAsync();
             return View(machines);
         }
 
@@ -34,17 +30,11 @@ namespace machineinfo.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("MachineName")]Machine machine)
+        public IActionResult Create([Bind("MachineName")]Machine machine)
         {
             try
             {
-                db.Open();
-                var query = "INSERT INTO machines (MachineName) VALUES (@Name)";
-                var param = new DynamicParameters();
-                param.Add("Name", machine.MachineName);
-
-                await db.ExecuteAsync(query, param);
-                db.Dispose();
+                machineRepository.CreateAsync(machine);
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -55,21 +45,13 @@ namespace machineinfo.Controllers
             return View(machine);
         }
 
-        public async Task<IActionResult> Details(int? id, MachineVM model)
+        public async Task<IActionResult> Details(int? id)
         {
             if(id == null)
             {
                 return NotFound();
             }
-            var vm = new MachineVM();
-
-            var query = "SELECT * FROM Machines WHERE MachineId = @Id";
-            var machine = await db.QuerySingleOrDefaultAsync<Machine>(query, new{ id });
-            vm.Name = machine.MachineName;
-
-            var query2 = "SELECT * FROM failures WHERE MachineId = '" + @id + "'";
-            var failures = await db.QueryAsync<Failure>(query2); 
-            vm.Failures = failures;
+            var vm = await machineRepository.GetMachineByIDAsync(id);
             return View(vm);
         }
 
@@ -80,29 +62,19 @@ namespace machineinfo.Controllers
             {
                 return NotFound();
             }
-            db.Open();
+            var machine = await machineRepository.MachineToUpdateAsync(id);
 
-            var query = "SELECT * FROM machines WHERE MachineId = @id";
-            var machine = await db.QuerySingleOrDefaultAsync<Machine>(query, new{id});
-
-            db.Dispose();
             return View(machine);
         }
 
         [HttpPost, ActionName("Edit")]
-        public async Task<IActionResult> EditPost(int? id, Machine machine)
+        public IActionResult EditPost(int? id, Machine machine)
         {
             if(id == null) return NotFound();
             try
             {
-                db.Open();
-                var query = "UPDATE Machines SET MachineName = @MachineName WHERE MachineId = '" + @id + "'";
+                machineRepository.UpdateAsync(id, machine);
 
-                var param = new DynamicParameters();
-                param.Add("MachineName", machine.MachineName);
-
-                await db.ExecuteAsync(query, machine);
-                db.Dispose();
                 return RedirectToAction(nameof(Index));
             }
             catch(System.Exception ex)
@@ -112,18 +84,14 @@ namespace machineinfo.Controllers
             return View(machine);
         }
 
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
             if(id == null)
             {
                 return NotFound();
             }
-            db.Open();
-            var query = "DELETE FROM failures WHERE MachineId = @id";
-            await db.ExecuteAsync(query, new {id});
-            var query2 = "DELETE FROM machines WHERE MachineId = @id";
-            await db.ExecuteAsync(query2, new {id});
-            db.Close();
+            
+            machineRepository.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
     }

@@ -1,4 +1,5 @@
-@model IEnumerable<machineinfo.Models.Failure>
+@model IEnumerable<FailureVM>
+@using machineinfo.ViewModels
 
 @{
     ViewData["Title"] = "Create failure";
@@ -29,7 +30,7 @@
                 Entry time
             </th>
             <th>
-                Machine ID
+                Machine
             </th>
             <th></th>
             <th></th>
@@ -57,7 +58,7 @@
                         @item.EntryTime
                     </td>
                     <td>
-                        @item.MachineId
+                        @item.MachineName
                     </td>
                     <td><a asp-action="Edit" asp-route-id="@item.FailureId">Update</a></td>
                     <td>

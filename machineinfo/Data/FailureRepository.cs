@@ -17,12 +17,10 @@ namespace machineinfo.Data
             this.db = db;
         }
 
-        public async Task<IEnumerable<Failure>> GetFailuresAsync()
+        public async Task<IEnumerable<FailureVM>> GetFailuresAsync()
         {
-            var query = "SELECT * FROM failures";
-            var failure = await db.QueryAsync<Failure>(query);
-        
-            return failure;
+            var query = "SELECT * FROM failures JOIN Machines ON Failures.MachineId = Machines.MachineId";
+            return await db.QueryAsync<FailureVM>(query);
         }
 
         public void Create(Failure failure, List<IFormFile> files)
@@ -38,17 +36,13 @@ namespace machineinfo.Data
         public async Task<FailureVM> GetFailureDetailsAsync(int? id)
         {
             var q = "SELECT Failures.FailureId, Failures.Name, Failures.Priority, Failures.Description, Failures.Status, Failures.fileURLs, Machines.MachineName FROM Failures JOIN Machines ON Machines.MachineId = Failures.MachineId WHERE Failures.FailureID = " + @id;
-            var vm = await db.QuerySingleOrDefaultAsync<FailureVM>(q);
-
-            return vm;
+            return await db.QuerySingleOrDefaultAsync<FailureVM>(q);
         }
 
         public async Task<Failure> GetFailureByIDAsync(int? id)
         {
             var query = "SELECT * FROM failures WHERE FailureId = " + @id;
-            var failure = await db.QuerySingleOrDefaultAsync<Failure>(query);
-
-            return failure;
+            return await db.QuerySingleOrDefaultAsync<Failure>(query);
         }
 
         public void Update(int? id, Failure failure)

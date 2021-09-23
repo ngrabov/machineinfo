@@ -1,15 +1,17 @@
-@model MachineVM
+@model IEnumerable<FailureVM>
 @using machineinfo.ViewModels
 
 @{
-    ViewData["Title"] = Model.Name + " details";
+    ViewData["Title"] = Model.FirstOrDefault().MachineName + " details";
 }
 
-<h1>@Model.Name</h1>
+<h1>@Model.FirstOrDefault().MachineName</h1>
 
+@if(Model.FirstOrDefault().FailureId != null)
+{
 <div>
     <div>
-        <h4 style="width: 90%; margin: auto; text-align: center; padding-bottom: 20px;">List of failures for @Model.Name</h4>
+        <h4 style="width: 90%; margin: auto; text-align: center; padding-bottom: 20px;">List of failures for @Model.FirstOrDefault().MachineName</h4>
     </div>
     <table class="table table-hover">
         <thead>
@@ -21,13 +23,13 @@
             <th>Priority</th>
             <th>Time created</th>
         </thead>
-        @foreach (var item in Model.Failures)
+        @foreach (var item in Model)
         {
             <tr>
                 <td>@item.FailureId</td>
                 <td><a asp-controller="Failures" asp-action="Details" asp-route-id="@item.FailureId">@item.Name</a></td>
                 <td>@item.Description</td>
-                <td>@Model.Name</td>
+                <td>@item.MachineName</td>
                 <td>@item.Status</td>
                 <td>@item.Priority</td>
                 <td>@item.EntryTime</td>
@@ -35,6 +37,7 @@
         }
     </table>
 </div>
+}
 <div>
     <a asp-action="Index">Back to list</a>
 </div>
