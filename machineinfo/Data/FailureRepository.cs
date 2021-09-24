@@ -26,7 +26,7 @@ namespace machineinfo.Data
         public int Create(Failure failure, List<IFormFile> files)
         {
             var query = "INSERT INTO Failures (Name, Description, Priority, Status, EntryTime, MachineId, fileURLs) " +
-             "SELECT @Name, @Description, @Priority, @Status, current_timestamp, @MachineId, @fileURLs WHERE NOT EXISTS (SELECT " + 
+             "SELECT @Name, @Description, @Priority, '0', current_timestamp, @MachineId, @fileURLs WHERE NOT EXISTS (SELECT " + 
              " FailureId FROM Failures WHERE Status = '0' AND MachineId = @MachineId)";
             
             return db.Execute(query, new[]{
@@ -48,29 +48,20 @@ namespace machineinfo.Data
             return await db.QuerySingleOrDefaultAsync<Failure>(query);
         }
 
-        public void Update(int? id, Failure failure, System.DateTime? conclusionTime)
+        public int Update(int? id, Failure failure)
         {
-            string query = "";
-            if(conclusionTime == null)
-            {
-                query = "UPDATE failures SET Name = @Name, Description = @Description, Priority = @Priority, Status = @Status, MachineId = @MachineId, " +
-                "fileURLs = @fileURLs WHERE FailureId = '" + @id + "'";
-            }
-            else
-            {
-                query = "UPDATE failures SET Name = @Name, ConclusionTime = " + System.DateTime.Now + ", Description = @Description, Priority = @Priority, " +
-                "Status = @Status, MachineId = @MachineId, fileURLs = @fileURLs WHERE FailureId = '" + @id + "'"; 
-            }
+            string query = "UPDATE failures SET Name = @Name, Description = @Description, Priority = @Priority, MachineId = @MachineId, " +
+                "fileURLs = @fileURLs WHERE FailureId = '" + @id + "' AND NOT EXISTS (SELECT " + 
+                " FailureId FROM Failures WHERE Status = '0' AND MachineId = @MachineId)";;
+
             var param = new DynamicParameters();
             param.Add("Name", failure.Name);
             param.Add("Description", failure.Description);
             param.Add("Priority", failure.Priority);
-            param.Add("Status", failure.Status);
             param.Add("MachineId", failure.MachineId);
             param.Add("fileURLS", failure.fileURLs);
 
-            //check the id
-            db.Execute(query, param);
+            return db.Execute(query, param);
         }
 
         public void Resolve(int? id)

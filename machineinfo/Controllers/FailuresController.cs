@@ -92,7 +92,7 @@ namespace machineinfo.Controllers
         }
 
         [HttpPost, ActionName("Edit")]
-        public async Task<IActionResult> EditPost(int? id, Failure failure, System.DateTime? conclusionTime, List<IFormFile> files)
+        public async Task<IActionResult> EditPost(int? id, Failure failure, List<IFormFile> files)
         {
             try
             {
@@ -111,7 +111,12 @@ namespace machineinfo.Controllers
                     fileURLs += wbp + "|";
                 }
                 failure.fileURLs = fileURLs;
-                failureRepository.Update(id, failure, conclusionTime);
+                var n = failureRepository.Update(id, failure);
+
+                if(n == 0)
+                {
+                    return Content("There's already an active failure on the selected machine. Try again.");
+                }
                 
                 return RedirectToAction(nameof(Index));
             }

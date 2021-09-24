@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using machineinfo.Models;
 using machineinfo.Data;
 using System.Threading.Tasks;
+using machineinfo.ViewModels;
+using System.Linq;
 
 namespace machineinfo.Controllers
 {
@@ -16,10 +18,11 @@ namespace machineinfo.Controllers
             this.homeRepository = homeRepository;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? pageNumber)
         {
+            int pageSize = 10;
             var failures = await homeRepository.GetFailuresByPriorityAsync();
-            return View(failures);
+            return View(PaginatedList<FailureVM>.Create(failures, pageNumber ?? 1, pageSize));
         }
 
         public IActionResult Privacy()

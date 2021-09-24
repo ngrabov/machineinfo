@@ -17,7 +17,7 @@ namespace machineinfo.Data
 
         public async Task<IEnumerable<FailureVM>> GetFailuresByPriorityAsync()
         {
-            var query = "SELECT * FROM Failures JOIN Machines ON Machines.MachineId = Failures.MachineId WHERE Status = '0' ORDER BY Priority, EntryTime";
+            var query = "SELECT * FROM Failures JOIN Machines ON Machines.MachineId = Failures.MachineId WHERE Status = '0' ORDER BY Priority DESC, EntryTime DESC";
             var failures = await db.QueryAsync<FailureVM>(query);
             return failures;
         }

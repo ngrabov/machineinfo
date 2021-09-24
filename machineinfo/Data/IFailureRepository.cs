@@ -12,7 +12,7 @@ namespace machineinfo.Data
         int Create(Failure failure, List<IFormFile> files);
         Task<FailureVM> GetFailureDetailsAsync(int? id);
         Task<Failure> GetFailureByIDAsync(int? id);
-        void Update(int? id, Failure failure, System.DateTime? conclusionTime);
+        int Update(int? id, Failure failure);
         void Resolve(int? id);
         void Delete(int? id);
         IEnumerable<Machine> GetMachines();
