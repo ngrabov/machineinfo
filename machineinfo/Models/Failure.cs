@@ -21,6 +21,7 @@ namespace machineinfo.Models
         public Status Status { get; set; }
         public DateTime EntryTime { get; set; }
         public DateTime ConclusionTime { get; set; }
+        [Display(Name = "Machine")]
         public int MachineId { get; set; }
         public string fileURLs { get; set;}
     }

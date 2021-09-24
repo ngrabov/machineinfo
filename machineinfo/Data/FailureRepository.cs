@@ -84,5 +84,11 @@ namespace machineinfo.Data
             var query = "DELETE FROM failures WHERE FailureId = @Id";
             db.Execute(query, new{id});
         }
+
+        public IEnumerable<Machine> GetMachines()
+        {
+            var query = "SELECT * FROM Machines";
+            return db.Query<Machine>(query);
+        }
     }
 }

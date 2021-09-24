@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.IO;
 using machineinfo.Data;
+using System.Linq;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace machineinfo.Controllers
 {
@@ -13,10 +15,12 @@ namespace machineinfo.Controllers
     {
         private IDbConnection db;
         private IFailureRepository failureRepository;
+        private IMachineRepository machineRepository;
 
-        public FailuresController(IDbConnection db, IFailureRepository failureRepository)
+        public FailuresController(IDbConnection db, IFailureRepository failureRepository, IMachineRepository machineRepository)
         {
             this.db = db;
+            this.machineRepository = machineRepository;
             this.failureRepository = failureRepository;
         }
 
@@ -28,6 +32,7 @@ namespace machineinfo.Controllers
 
         public IActionResult Create()
         {
+            Populate();
             return View();
         }
 
@@ -81,6 +86,7 @@ namespace machineinfo.Controllers
             {
                 return NotFound();
             }
+            Populate();
             var failure = await failureRepository.GetFailureByIDAsync(id);
             return View(failure);
         }
@@ -138,6 +144,12 @@ namespace machineinfo.Controllers
 
             failureRepository.Delete(id);
             return RedirectToAction(nameof(Index));
+        }
+
+        private void Populate(object selectedMachine = null)
+        {
+            var query = failureRepository.GetMachines();
+            ViewBag.Machine = new SelectList(query, "MachineId", "MachineName", selectedMachine);
         }
     }
 }

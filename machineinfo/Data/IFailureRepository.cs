@@ -15,5 +15,6 @@ namespace machineinfo.Data
         void Update(int? id, Failure failure, System.DateTime? conclusionTime);
         void Resolve(int? id);
         void Delete(int? id);
+        IEnumerable<Machine> GetMachines();
     }
 }

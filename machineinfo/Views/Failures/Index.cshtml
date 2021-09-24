@@ -92,7 +92,11 @@
 
 @{
     var k = z/i;
+    var days = k.Days;
+    var hours = k.Hours;
+    var mins = k.Minutes;
+    var sec = k.Seconds;
 }
 <div>
-    Average failure lasting time: @k
+    Average failure lasting time: @days days, @hours hours, @mins minutes, @sec seconds
 </div>
