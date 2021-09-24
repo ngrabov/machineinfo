@@ -86,7 +86,7 @@ namespace machineinfo.Controllers
         }
 
         [HttpPost, ActionName("Edit")]
-        public async Task<IActionResult> EditPost(int? id, Failure failure, List<IFormFile> files)
+        public async Task<IActionResult> EditPost(int? id, Failure failure, System.DateTime? conclusionTime, List<IFormFile> files)
         {
             try
             {
@@ -105,7 +105,7 @@ namespace machineinfo.Controllers
                     fileURLs += wbp + "|";
                 }
                 failure.fileURLs = fileURLs;
-                failureRepository.Update(id, failure);
+                failureRepository.Update(id, failure, conclusionTime);
                 
                 return RedirectToAction(nameof(Index));
             }

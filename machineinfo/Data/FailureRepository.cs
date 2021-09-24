@@ -37,7 +37,8 @@ namespace machineinfo.Data
 
         public async Task<FailureVM> GetFailureDetailsAsync(int? id)
         {
-            var q = "SELECT Failures.FailureId, Failures.Name, Failures.Priority, Failures.Description, Failures.Status, Failures.fileURLs, Machines.MachineName FROM Failures JOIN Machines ON Machines.MachineId = Failures.MachineId WHERE Failures.FailureID = " + @id;
+            var q = "SELECT Failures.FailureId, Failures.Name, Failures.Priority, Failures.EntryTime, Failures.ConclusionTime, Failures.Description, " +
+            "Failures.Status, Failures.fileURLs, Machines.MachineName FROM Failures JOIN Machines ON Machines.MachineId = Failures.MachineId WHERE Failures.FailureID = " + @id;
             return await db.QuerySingleOrDefaultAsync<FailureVM>(q);
         }
 
@@ -47,10 +48,19 @@ namespace machineinfo.Data
             return await db.QuerySingleOrDefaultAsync<Failure>(query);
         }
 
-        public void Update(int? id, Failure failure)
+        public void Update(int? id, Failure failure, System.DateTime? conclusionTime)
         {
-            var query = "UPDATE failures SET Name = @Name, Description = @Description, Priority = @Priority, Status = @Status, MachineId = @MachineId, fileURLs = @fileURLs WHERE FailureId = '" + @id + "'";
-
+            string query = "";
+            if(conclusionTime == null)
+            {
+                query = "UPDATE failures SET Name = @Name, Description = @Description, Priority = @Priority, Status = @Status, MachineId = @MachineId, " +
+                "fileURLs = @fileURLs WHERE FailureId = '" + @id + "'";
+            }
+            else
+            {
+                query = "UPDATE failures SET Name = @Name, ConclusionTime = " + System.DateTime.Now + ", Description = @Description, Priority = @Priority, " +
+                "Status = @Status, MachineId = @MachineId, fileURLs = @fileURLs WHERE FailureId = '" + @id + "'"; 
+            }
             var param = new DynamicParameters();
             param.Add("Name", failure.Name);
             param.Add("Description", failure.Description);
@@ -65,7 +75,7 @@ namespace machineinfo.Data
 
         public void Resolve(int? id)
         {
-            var query = "UPDATE failures SET Status = '1' WHERE FailureId = '" + @id + "'";
+            var query = "UPDATE failures SET Status = '1', ConclusionTime = '" + System.DateTime.Now + "' WHERE FailureId = '" + @id + "'";
             db.Execute(query, new{id});
         }
 

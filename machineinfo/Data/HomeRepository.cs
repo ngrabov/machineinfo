@@ -1,7 +1,6 @@
 using System.Data;
 using System.Threading.Tasks;
 using Dapper;
-using machineinfo.Models;
 using System.Collections.Generic;
 using machineinfo.ViewModels;
 

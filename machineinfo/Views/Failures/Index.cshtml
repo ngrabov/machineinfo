@@ -1,8 +1,11 @@
 @model IEnumerable<FailureVM>
 @using machineinfo.ViewModels
+@using System;
 
 @{
     ViewData["Title"] = "Create failure";
+    TimeSpan z = new TimeSpan(0,0,0,0);
+    int i = 0;
 }
 
 <div>
@@ -28,6 +31,9 @@
             </th>
             <th>
                 Entry time
+            </th>
+            <th>
+                Time resolved
             </th>
             <th>
                 Machine
@@ -58,6 +64,17 @@
                         @item.EntryTime
                     </td>
                     <td>
+                        @if(item.ConclusionTime != null)
+                        {
+                            @item.ConclusionTime
+                            i++;
+                        }
+                    </td>
+                    @{
+                        var j = item.ConclusionTime - item.EntryTime;
+                        z += j.GetValueOrDefault();
+                    }
+                    <td>
                         @item.MachineName
                     </td>
                     <td><a asp-action="Edit" asp-route-id="@item.FailureId">Update</a></td>
@@ -71,4 +88,11 @@
             }
         </tbody>
     </table>
+</div>
+
+@{
+    var k = z/i;
+}
+<div>
+    Average failure lasting time: @k
 </div>

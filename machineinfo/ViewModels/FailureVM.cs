@@ -13,6 +13,7 @@ namespace machineinfo.ViewModels
         public Status? Status { get; set;}
         public string? fileURLs { get; set; }
         public string? MachineName { get; set; }
-        public DateTime EntryTime { get; set; }
+        public DateTime? EntryTime { get; set; }
+        public DateTime? ConclusionTime { get; set;}
     }
 }

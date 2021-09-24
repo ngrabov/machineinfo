@@ -30,7 +30,9 @@ namespace machineinfo.Data
 
         public async Task<IEnumerable<FailureVM>> GetMachineByIDAsync(int? id)
         {
-            var q = "SELECT Failures.FailureId, Failures.Name, Failures.Priority, Failures.Description, Failures.Status, Failures.fileURLs, Failures.EntryTime, Machines.MachineName FROM Machines LEFT JOIN Failures ON Machines.MachineId = Failures.MachineId WHERE Machines.MachineID = " + @id;
+            var q = "SELECT Failures.FailureId, Failures.Name, Failures.Priority, Failures.Description, Failures.Status, " +
+            "Failures.fileURLs, Failures.EntryTime, Failures.ConclusionTime, Machines.MachineName FROM Machines LEFT JOIN " +
+            "Failures ON Machines.MachineId = Failures.MachineId WHERE Machines.MachineID = " + @id;
             return await db.QueryAsync<FailureVM>(q);
         }
 
@@ -42,7 +44,8 @@ namespace machineinfo.Data
 
         public int Update(int? id, Machine machine)
         {
-            var query = "UPDATE Machines SET MachineName = @MachineName WHERE MachineId = '" + @id + "' AND  NOT EXISTS (SELECT MachineName FROM Machines WHERE MachineName = @MachineName)";
+            var query = "UPDATE Machines SET MachineName = @MachineName WHERE MachineId = '" + @id + "' AND  NOT EXISTS " +
+            "(SELECT MachineName FROM Machines WHERE MachineName = @MachineName)";
 
             var param = new DynamicParameters();
             param.Add("MachineName", machine.MachineName);

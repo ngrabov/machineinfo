@@ -20,6 +20,7 @@ namespace machineinfo.Models
         public Priority Priority { get; set; }
         public Status Status { get; set; }
         public DateTime EntryTime { get; set; }
+        public DateTime ConclusionTime { get; set; }
         public int MachineId { get; set; }
         public string fileURLs { get; set;}
     }

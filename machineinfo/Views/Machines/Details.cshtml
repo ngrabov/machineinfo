@@ -3,6 +3,8 @@
 
 @{
     ViewData["Title"] = Model.FirstOrDefault().MachineName + " details";
+    TimeSpan z = new TimeSpan(0,0,0,0);
+    int i = 0;
 }
 
 <h1>@Model.FirstOrDefault().MachineName</h1>
@@ -22,6 +24,7 @@
             <th>Status</th>
             <th>Priority</th>
             <th>Time created</th>
+            <th>Time resolved</th>
         </thead>
         @foreach (var item in Model)
         {
@@ -33,11 +36,28 @@
                 <td>@item.Status</td>
                 <td>@item.Priority</td>
                 <td>@item.EntryTime</td>
+                <td>
+                    @if(item.ConclusionTime != null)
+                    {
+                        @item.ConclusionTime
+                        i++;
+                    }
+                </td>
+                @{
+                    var j = item.ConclusionTime - item.EntryTime;
+                    z += j.GetValueOrDefault();
+                }
             </tr>
         }
     </table>
 </div>
 }
+@{
+    var k = z/i;
+}
+<div style="padding-bottom: 25px;">
+    Average failure lasting time: @k
+</div>
 <div>
     <a asp-action="Index">Back to list</a>
 </div>
