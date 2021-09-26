@@ -4,9 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Data;
-using machineinfo.Data;
 using Npgsql;
-using Microsoft.AspNetCore.Identity;
+using machineinfo.Repositories;
 using machineinfo.Services;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 
@@ -23,11 +22,7 @@ namespace machineinfo
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>();
             services.AddDatabaseDeveloperPageExceptionFilter();
-
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddTransient<IDbConnection>((sp) => new NpgsqlConnection(Configuration.GetConnectionString("postgres")));
             services.AddControllersWithViews();

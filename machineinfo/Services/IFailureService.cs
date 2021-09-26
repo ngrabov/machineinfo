@@ -13,8 +13,8 @@ namespace machineinfo.Services
         Task<FailureVM> GetFailureDetailsAsync(int? id);
         Task<Failure> GetFailureByIDAsync(int? id);
         Task<int> Update(int? id, Failure failure, List<IFormFile> files);
-        void Resolve(int? id);
-        void Delete(int? id);
+        Task Resolve(int? id);
+        Task Delete(int? id);
         IEnumerable<Machine> GetMachines();
     }
 }

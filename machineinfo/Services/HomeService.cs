@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using machineinfo.Data;
+using machineinfo.Repositories;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using machineinfo.ViewModels;

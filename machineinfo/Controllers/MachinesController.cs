@@ -25,9 +25,9 @@ namespace machineinfo.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([Bind("MachineName")]Machine machine)
+        public async Task<IActionResult> Create([Bind("MachineName")]Machine machine)
         {
-            var k = service.Create(machine);
+            var k = await service.Create(machine);
             if(k == 0) return View(machine);
             else
             {
@@ -56,11 +56,11 @@ namespace machineinfo.Controllers
         }
 
         [HttpPost, ActionName("Edit")]
-        public IActionResult EditPost(int? id, Machine machine)
+        public async Task<IActionResult> EditPost(int? id, Machine machine)
         {
             if(id == null) return NotFound();
 
-            var j = service.Update(id, machine);
+            var j = await service.Update(id, machine);
             if(j == 0) return View(machine);
             else 
             {

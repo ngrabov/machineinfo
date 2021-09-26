@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using machineinfo.Models;
-using machineinfo.Data;
 using System.Threading.Tasks;
 using machineinfo.ViewModels;
 using machineinfo.Services;

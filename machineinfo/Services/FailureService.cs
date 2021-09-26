@@ -1,4 +1,4 @@
-using machineinfo.Data;
+using machineinfo.Repositories;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -43,7 +43,7 @@ namespace machineinfo.Services
                     fileURLs += wbp + "|";
                 }
                 failure.fileURLs = fileURLs;
-                m = repository.Create(failure, files);
+                m = await repository.Create(failure, files);
                 if(m == 0)
                 {
                     modelState.ActionContext.ModelState.AddModelError("", "There's already an active failure on the selected machine. Try again.");
@@ -85,7 +85,7 @@ namespace machineinfo.Services
                     fileURLs += wbp + "|";
                 }
                 failure.fileURLs = fileURLs;
-                n = repository.Update(id, failure);
+                n = await repository.Update(id, failure);
 
                 if(n == 0)
                 {
@@ -99,14 +99,14 @@ namespace machineinfo.Services
             return n;
         }
 
-        public void Resolve(int? id)
+        public async Task Resolve(int? id)
         {
-            repository.Resolve(id);
+            await repository.Resolve(id);
         }
 
-        public void Delete(int? id)
+        public async Task Delete(int? id)
         {
-            repository.Delete(id);
+            await repository.Delete(id);
         }
 
         public IEnumerable<Machine> GetMachines()

@@ -4,7 +4,7 @@ using Dapper;
 using System.Collections.Generic;
 using machineinfo.ViewModels;
 
-namespace machineinfo.Data
+namespace machineinfo.Repositories
 {
     public class HomeRepository : IHomeRepository
     {

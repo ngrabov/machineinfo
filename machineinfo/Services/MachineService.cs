@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using machineinfo.Data;
+using machineinfo.Repositories;
 using System.Threading.Tasks;
 using machineinfo.Models;
 using machineinfo.ViewModels;
@@ -22,12 +22,12 @@ namespace machineinfo.Services
             return await repository.GetMachinesAsync();
         }
 
-        public int Create(Machine machine)
+        public async Task<int> Create(Machine machine)
         {
             int k = 0;
             try
             {
-                k = repository.Create(machine);
+                k = await repository.Create(machine);
                 if(k == 0)
                 {
                     modelState.ActionContext.ModelState.AddModelError("", "There's already a machine with the same name in the database. Try again.");
@@ -40,12 +40,12 @@ namespace machineinfo.Services
             return k;
         }
 
-        public int Update(int? id, Machine machine)
+        public async Task<int> Update(int? id, Machine machine)
         {
             int j = 0;
             try
             {
-                j = repository.Update(id, machine);
+                j = await repository.Update(id, machine);
                 if(j == 0)
                 {
                     modelState.ActionContext.ModelState.AddModelError("", "There's already a machine with the same name in the database. Try again.");

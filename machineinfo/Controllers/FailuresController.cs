@@ -1,11 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
 using System.Threading.Tasks;
 using machineinfo.Models;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
-using System.IO;
-using machineinfo.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using machineinfo.Services;
 
@@ -13,12 +10,10 @@ namespace machineinfo.Controllers
 {
     public class FailuresController : Controller
     {
-        private IFailureRepository failureRepository;
         private IFailureService service;
 
-        public FailuresController(IFailureRepository failureRepository, IFailureService service)
+        public FailuresController(IFailureService service)
         {
-            this.failureRepository = failureRepository;
             this.service = service;
         }
 
@@ -77,27 +72,27 @@ namespace machineinfo.Controllers
                 return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Resolve(int? id)
+        public async Task<IActionResult> Resolve(int? id)
         {
             if(id == null)
             {
                 return NotFound();
             }
 
-            service.Resolve(id);
+            await service.Resolve(id);
             
             return RedirectToAction("Index", "Home");
         }
 
         [HttpPost]
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if(id == null)
             {
                 return NotFound();
             }
 
-            service.Delete(id);
+            await service.Delete(id);
             return RedirectToAction(nameof(Index));
         }
 

@@ -4,17 +4,17 @@ using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using machineinfo.ViewModels;
 
-namespace machineinfo.Data
+namespace machineinfo.Repositories
 {
     public interface IFailureRepository
     {
         Task<IEnumerable<FailureVM>> GetFailuresAsync();
-        int Create(Failure failure, List<IFormFile> files);
+        Task<int> Create(Failure failure, List<IFormFile> files);
         Task<FailureVM> GetFailureDetailsAsync(int? id);
         Task<Failure> GetFailureByIDAsync(int? id);
-        int Update(int? id, Failure failure);
-        void Resolve(int? id);
-        void Delete(int? id);
+        Task<int> Update(int? id, Failure failure);
+        Task Resolve(int? id);
+        Task Delete(int? id);
         IEnumerable<Machine> GetMachines();
     }
 }

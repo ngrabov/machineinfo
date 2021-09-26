@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Dapper;
 using machineinfo.ViewModels;
 
-namespace machineinfo.Data
+namespace machineinfo.Repositories
 {
     public class FailureRepository : IFailureRepository
     {
@@ -23,13 +23,13 @@ namespace machineinfo.Data
             return await db.QueryAsync<FailureVM>(query);
         }
 
-        public int Create(Failure failure, List<IFormFile> files)
+        public async Task<int> Create(Failure failure, List<IFormFile> files)
         {
             var query = "INSERT INTO Failures (Name, Description, Priority, Status, EntryTime, MachineId, fileURLs) " +
              "SELECT @Name, @Description, @Priority, '0', current_timestamp, @MachineId, @fileURLs WHERE NOT EXISTS (SELECT " + 
              " FailureId FROM Failures WHERE Status = '0' AND MachineId = @MachineId)";
             
-            return db.Execute(query, new[]{
+            return await db.ExecuteAsync(query, new[]{
                 new{Name = failure.Name, Description = failure.Description, Priority = failure.Priority, 
                 Status = failure.Status, EntryTime = System.DateTime.Now, MachineId = failure.MachineId, fileURLs = failure.fileURLs}
             });
@@ -48,7 +48,7 @@ namespace machineinfo.Data
             return await db.QuerySingleOrDefaultAsync<Failure>(query);
         }
 
-        public int Update(int? id, Failure failure)
+        public async Task<int> Update(int? id, Failure failure)
         {
             string query = "UPDATE failures SET Name = @Name, Description = @Description, Priority = @Priority, MachineId = @MachineId, " +
                 "fileURLs = @fileURLs WHERE FailureId = '" + @id + "' AND NOT EXISTS (SELECT " + 
@@ -61,19 +61,19 @@ namespace machineinfo.Data
             param.Add("MachineId", failure.MachineId);
             param.Add("fileURLS", failure.fileURLs);
 
-            return db.Execute(query, param);
+            return await db.ExecuteAsync(query, param);
         }
 
-        public void Resolve(int? id)
+        public async Task Resolve(int? id)
         {
             var query = "UPDATE failures SET Status = '1', ConclusionTime = '" + System.DateTime.Now + "' WHERE FailureId = '" + @id + "'";
-            db.Execute(query, new{id});
+            await db.ExecuteAsync(query, new{id});
         }
 
-        public void Delete(int? id)
+        public async Task Delete(int? id)
         {
             var query = "DELETE FROM failures WHERE FailureId = @Id";
-            db.Execute(query, new{id});
+            await db.ExecuteAsync(query, new{id});
         }
 
         public IEnumerable<Machine> GetMachines()
