@@ -52,16 +52,17 @@
     </table>
 </div>
 }
-@{
+@if(i != 0)
+{
     var k = z/i;
     var days = k.Days;
     var hrs = k.Hours;
     var min = k.Minutes;
     var sec = k.Seconds;
+    <div style="padding-bottom: 25px;">
+        Average failure lasting time: @days days, @hrs hours, @min minutes, @sec seconds
+    </div>
 }
-<div style="padding-bottom: 25px;">
-    Average failure lasting time: @days days, @hrs hours, @min minutes, @sec seconds
-</div>
 <div>
     <a asp-action="Index">Back to list</a>
 </div>

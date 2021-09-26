@@ -4,24 +4,24 @@ using machineinfo.Models;
 using machineinfo.Data;
 using System.Threading.Tasks;
 using machineinfo.ViewModels;
-using System.Linq;
+using machineinfo.Services;
 
 namespace machineinfo.Controllers
 {
     
     public class HomeController : Controller
     {
-        private IHomeRepository homeRepository;
+        private IHomeService service;
 
-        public HomeController(IHomeRepository homeRepository)
+        public HomeController(IHomeService service)
         {
-            this.homeRepository = homeRepository;
+            this.service = service;
         }
 
         public async Task<IActionResult> Index(int? pageNumber)
         {
             int pageSize = 10;
-            var failures = await homeRepository.GetFailuresByPriorityAsync();
+            var failures = await service.GetFailuresByPriorityAsync();
             return View(PaginatedList<FailureVM>.Create(failures, pageNumber ?? 1, pageSize));
         }
 

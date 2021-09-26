@@ -1,26 +1,22 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using machineinfo.Data;
 using System.Threading.Tasks;
 using machineinfo.Models;
+using machineinfo.Services;
 
 namespace machineinfo.Controllers
 {
     public class MachinesController : Controller
     {
-        private IDbConnection db;
-        private IMachineRepository machineRepository;
+        private IMachineService service;
 
-        public MachinesController(IDbConnection db, IMachineRepository machineRepository)
+        public MachinesController(IMachineService service)
         {
-            this.db = db;
-            this.machineRepository = machineRepository;
+            this.service = service;
         }
 
         public async Task<IActionResult> Index()
         {
-            var machines = await machineRepository.GetMachinesAsync();
-            return View(machines);
+            return View(await service.GetMachinesAsync());
         }
 
         public IActionResult Create()
@@ -31,21 +27,12 @@ namespace machineinfo.Controllers
         [HttpPost]
         public IActionResult Create([Bind("MachineName")]Machine machine)
         {
-            try
+            var k = service.Create(machine);
+            if(k == 0) return View(machine);
+            else
             {
-                var k = machineRepository.Create(machine);
-                if(k == 0)
-                {
-                    return Content("There's already a machine with the same name in the database. Try again.");
-                }
                 return RedirectToAction(nameof(Index));
             }
-            catch
-            {
-                ModelState.AddModelError("", "Model error.");
-            }
-            ModelState.AddModelError("", "Model error.");
-            return View(machine);
         }
 
         public async Task<IActionResult> Details(int? id)
@@ -54,8 +41,7 @@ namespace machineinfo.Controllers
             {
                 return NotFound();
             }
-            var vm = await machineRepository.GetMachineByIDAsync(id);
-            return View(vm);
+            return View(await service.GetMachineByIDAsync(id));
         }
 
         [HttpGet]
@@ -65,29 +51,21 @@ namespace machineinfo.Controllers
             {
                 return NotFound();
             }
-            var machine = await machineRepository.MachineToUpdateAsync(id);
 
-            return View(machine);
+            return View(await service.MachineToUpdateAsync(id));
         }
 
         [HttpPost, ActionName("Edit")]
         public IActionResult EditPost(int? id, Machine machine)
         {
             if(id == null) return NotFound();
-            try
+
+            var j = service.Update(id, machine);
+            if(j == 0) return View(machine);
+            else 
             {
-                var j = machineRepository.Update(id, machine);
-                if(j == 0)
-                {
-                    return Content("There's already a machine with the same name in the database. Try again.");
-                }
                 return RedirectToAction(nameof(Index));
             }
-            catch(System.Exception ex)
-            {
-                ModelState.AddModelError("", ex.ToString());
-            }
-            return View(machine);
         }
 
         public IActionResult Delete(int? id)
@@ -97,7 +75,7 @@ namespace machineinfo.Controllers
                 return NotFound();
             }
             
-            machineRepository.Delete(id);
+            service.Delete(id);
             return RedirectToAction(nameof(Index));
         }
     }

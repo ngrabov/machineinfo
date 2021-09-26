@@ -7,6 +7,8 @@ using System.Data;
 using machineinfo.Data;
 using Npgsql;
 using Microsoft.AspNetCore.Identity;
+using machineinfo.Services;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace machineinfo
 {
@@ -31,6 +33,10 @@ namespace machineinfo
             services.AddControllersWithViews();
             services.AddRazorPages();
 
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+            services.AddTransient<IMachineService, MachineService>();
+            services.AddTransient<IHomeService, HomeService>();
+            services.AddTransient<IFailureService, FailureService>();
             services.AddScoped<IHomeRepository, HomeRepository>();
             services.AddScoped<IMachineRepository, MachineRepository>();
             services.AddScoped<IFailureRepository, FailureRepository>();

@@ -6,28 +6,25 @@ using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.IO;
 using machineinfo.Data;
-using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using machineinfo.Services;
 
 namespace machineinfo.Controllers
 {
     public class FailuresController : Controller
     {
-        private IDbConnection db;
         private IFailureRepository failureRepository;
-        private IMachineRepository machineRepository;
+        private IFailureService service;
 
-        public FailuresController(IDbConnection db, IFailureRepository failureRepository, IMachineRepository machineRepository)
+        public FailuresController(IFailureRepository failureRepository, IFailureService service)
         {
-            this.db = db;
-            this.machineRepository = machineRepository;
             this.failureRepository = failureRepository;
+            this.service = service;
         }
 
         public async Task<IActionResult> Index()
         {
-            var failure = await failureRepository.GetFailuresAsync();
-            return View(failure);
+            return View(await service.GetFailuresAsync());
         }
 
         public IActionResult Create()
@@ -39,34 +36,12 @@ namespace machineinfo.Controllers
         [HttpPost] 
         public async Task<IActionResult> Create([Bind("Name,Description,Priority,Status,EntryTime,MachineId,Stream,fileURLs")]Failure failure, List<IFormFile> files)
         {
-            try
+            var m = await service.Create(failure, files);
+            if(m == 0)
             {
-                string fileURLs = "";
-                foreach(var file in files)
-                {
-                    string wbp = Path.GetFileName(file.FileName);
-
-                    using(var stream = System.IO.File.Create("./wwwroot/" + wbp))
-                    {
-                        await file.CopyToAsync(stream);
-                    }
-                    
-                    fileURLs += wbp + "|";
-                }
-                failure.fileURLs = fileURLs;
-                var m = failureRepository.Create(failure, files);
-                if(m == 0)
-                {
-                    return Content("There's already an active failure on the selected machine. Try again.");
-                }
-                return RedirectToAction(nameof(Index));
+                return View(failure);
             }
-            catch(System.Exception e)
-            {
-                ModelState.AddModelError("", e.Message);
-            }
-
-            return View(failure);
+            return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Details(int? id)
@@ -75,9 +50,7 @@ namespace machineinfo.Controllers
             {
                 return NotFound();
             }
-            
-            var vm = await failureRepository.GetFailureDetailsAsync(id);
-            return View(vm);
+            return View(await service.GetFailureDetailsAsync(id));
         }
 
         public async Task<IActionResult> Edit(int? id)
@@ -87,44 +60,21 @@ namespace machineinfo.Controllers
                 return NotFound();
             }
             Populate();
-            var failure = await failureRepository.GetFailureByIDAsync(id);
-            return View(failure);
+            return View(await service.GetFailureByIDAsync(id));
         }
 
         [HttpPost, ActionName("Edit")]
         public async Task<IActionResult> EditPost(int? id, Failure failure, List<IFormFile> files)
         {
-            try
-            {
-                if(id == null) return NotFound();
-
-                string fileURLs = "";
-                foreach(var file in files)
-                {
-                    string wbp = Path.GetFileName(file.FileName);
-
-                    using(var stream = System.IO.File.Create("./wwwroot/" + wbp))
-                    {
-                        await file.CopyToAsync(stream);
-                    }
-                    
-                    fileURLs += wbp + "|";
-                }
-                failure.fileURLs = fileURLs;
-                var n = failureRepository.Update(id, failure);
+            if(id == null) return NotFound();
+           
+                var n = await service.Update(id, failure, files);
 
                 if(n == 0)
                 {
-                    return Content("There's already an active failure on the selected machine. Try again.");
+                    return View(failure);
                 }
-                
                 return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                ModelState.AddModelError("Error", "No match");
-            }
-            return View(failure);
         }
 
         public IActionResult Resolve(int? id)
@@ -134,7 +84,7 @@ namespace machineinfo.Controllers
                 return NotFound();
             }
 
-            failureRepository.Resolve(id);
+            service.Resolve(id);
             
             return RedirectToAction("Index", "Home");
         }
@@ -147,13 +97,13 @@ namespace machineinfo.Controllers
                 return NotFound();
             }
 
-            failureRepository.Delete(id);
+            service.Delete(id);
             return RedirectToAction(nameof(Index));
         }
 
         private void Populate(object selectedMachine = null)
         {
-            var query = failureRepository.GetMachines();
+            var query = service.GetMachines();
             ViewBag.Machine = new SelectList(query, "MachineId", "MachineName", selectedMachine);
         }
     }
