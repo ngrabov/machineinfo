@@ -1,3 +1,5 @@
 machineinfo/obj
 machineinfo/bin
+machineinfo.UnitTests/obj
+machineinfo.UnitTests/bin
 .vscode
