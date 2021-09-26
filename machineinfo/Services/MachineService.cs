@@ -68,9 +68,9 @@ namespace machineinfo.Services
             return await repository.MachineToUpdateAsync(id);
         }
 
-        public void Delete(int? id)
+        public async Task Delete(int? id)
         {
-            repository.Delete(id);
+            await repository.Delete(id);
         }
     }
 }

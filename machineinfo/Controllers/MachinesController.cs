@@ -68,14 +68,14 @@ namespace machineinfo.Controllers
             }
         }
 
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if(id == null)
             {
                 return NotFound();
             }
             
-            service.Delete(id);
+            await service.Delete(id);
             return RedirectToAction(nameof(Index));
         }
     }

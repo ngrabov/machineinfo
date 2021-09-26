@@ -53,7 +53,7 @@ namespace machineinfo.Repositories
             return await db.ExecuteAsync(query, param);
         }
 
-        public async void Delete(int? id)
+        public async Task Delete(int? id)
         {
             var query = "DELETE FROM Machines WHERE MachineId = @id";
             await db.ExecuteAsync(query, new {id});

@@ -19,7 +19,7 @@ namespace machineinfo.Controllers
 
         public async Task<IActionResult> Index(int? pageNumber)
         {
-            int pageSize = 10;
+            int pageSize = 5;
             var failures = await service.GetFailuresByPriorityAsync();
             return View(PaginatedList<FailureVM>.Create(failures, pageNumber ?? 1, pageSize));
         }

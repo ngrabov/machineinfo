@@ -12,6 +12,6 @@ namespace machineinfo.Repositories
         Task<IEnumerable<FailureVM>> GetMachineByIDAsync(int? id);
         Task<Machine> MachineToUpdateAsync(int? id);
         Task<int> Update(int? id, Machine machine);
-        void Delete(int? id);
+        Task Delete(int? id);
     }
 }
